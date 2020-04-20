@@ -5,15 +5,20 @@ file(GLOB SOURCE_LIST CONFIGURE_DEPENDS
         "${FinalProject_SOURCE_DIR}/apps/*.h"
         "${FinalProject_SOURCE_DIR}/apps/*.hpp"
         "${FinalProject_SOURCE_DIR}/apps/*.cc"
-        "${FinalProject_SOURCE_DIR}/apps/*.cpp")
+        "${FinalProject_SOURCE_DIR}/apps/*.cpp"
+        )
 
+file(GLOB RESOURCE_LIST CONFIGURE_DEPENDS
+        "${CINDER_PATH}/blocks/PretzelGui/resources/**"
+        )
 
 ci_make_app(
     APP_NAME    cinder-myapp
     CINDER_PATH ${CINDER_PATH}
     SOURCES     ${SOURCE_LIST}
     LIBRARIES   mylibrary
-    BLOCKS
+    BLOCKS PretzelGui
+    RESOURCES ${RESOURCE_LIST}
 )
 
 target_compile_features(cinder-myapp PRIVATE cxx_std_14)
