@@ -2,7 +2,7 @@
 # show up in IDEs unless they are listed in add_library.
 
 # Use Cinder CMake macros.
-get_filename_component(CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../" ABSOLUTE)
+get_filename_component(CINDER_PATH "../../.." ABSOLUTE)
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 include("${FinalProject_SOURCE_DIR}/cmake/make_cinder_library.cmake")
 
@@ -18,7 +18,7 @@ ci_make_library(
         LIBRARY_NAME mylibrary
         CINDER_PATH  ${CINDER_PATH}
         SOURCES      ${SOURCE_LIST}
-        INCLUDES     "${FinalProject_SOURCE_DIR}/include"
+        INCLUDES     "${FinalProject_SOURCE_DIR}/include/"
         LIBRARIES
         BLOCKS
 )
@@ -50,4 +50,4 @@ elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 endif ()
 
 # IDEs should put the headers in a nice place
-source_group(TREE "${PROJECT_SOURCE_DIR}/include" PREFIX "Header Files" FILES ${HEADER_LIST})
+source_group(TREE "../include" PREFIX "Header Files" FILES ${HEADER_LIST})
