@@ -20,7 +20,11 @@ class MyApp : public cinder::app::App {
 
   pretzel::PretzelGuiRef gui;
   float mRadius;
-  cinder::gl::Texture2dRef mTex;
+  void onButtonPress();
+  std::string mFps;
+  cinder::gl::TextureRef		mTexture;
+
+
 
 };
 
