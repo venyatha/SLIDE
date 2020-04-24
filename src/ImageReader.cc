@@ -18,8 +18,6 @@ void GridAreas(std::string filepath) {
   newSurface.copyFrom( oldSurface, area);
   cinder::writeImage("/Users/mannev1/Desktop/cinder_0.9.2_mac/my-projects/final-project-vmanne3/assets/crop.jpeg", newSurface);
 
-
-
   /*
   int count = 0;
   for (int i = 0; i < 3; i++) {
@@ -73,14 +71,27 @@ void GridAreas(std::string filepath) {
 
 GameBoard::GameBoard(int boardSize) {
   board_size_ = boardSize;
+  mode_ = "numbers";
+
+  std::vector<int> one(boardSize,'0');
+  std::vector<std::vector<int>> two(boardSize,one);
 
   int count = 0;
   for (int i = 0; i < boardSize; i++) {
     for (int j = 0; j < boardSize; j++) {
-      grid_[i][j] = count;
+      two[j][i] = count;
       count++;
     }
   }
-
+  grid_ = two;
 }
+
+GameBoard::GameBoard() {
+  board_size_ = 3;
+  mode_ = "default";
+}
+void GameBoard::Move(int x, int y, std::string direction) {
+}
+
+
 }  // namespace mylibrary

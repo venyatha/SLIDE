@@ -10,15 +10,24 @@ namespace mylibrary {
 
 void GridAreas(std::string filepath);
 
+enum class Direction { kUp, kDown, kLeft, kRight };
+
 class GameBoard {
  public:
   int board_size_;
-  int grid_[3][3];
+  std::string mode_;
+  //int grid_[3][3];
+  std::vector<std::vector<int>> grid_;
 
   //used for pre-loaded image
   GameBoard();
   //used for numbers mode
   explicit GameBoard(int boardSize);
+
+  void Move(int x, int y, std::string direction);
+  //shuffle
+  //check win
+
 };
 
 
