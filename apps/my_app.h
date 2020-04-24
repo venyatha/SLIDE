@@ -4,8 +4,8 @@
 #define FINALPROJECT_APPS_MYAPP_H_
 
 #include <cinder/app/App.h>
+#include <mylibrary/ImageReader.h>
 #include <pretzel/PretzelGui.h>
-
 
 namespace myapp {
 
@@ -24,8 +24,8 @@ class MyApp : public cinder::app::App {
   std::string mFps;
   cinder::gl::TextureRef		mTexture;
 
-
-
+  mylibrary::GameBoard game_board_;
+  void DrawBoard();
 };
 
 

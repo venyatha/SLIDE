@@ -10,6 +10,16 @@ namespace mylibrary {
 
 void GridAreas(std::string filepath);
 
+class GameBoard {
+ public:
+  int board_size_;
+  int grid_[3][3];
+
+  //used for pre-loaded image
+  GameBoard();
+  //used for numbers mode
+  explicit GameBoard(int boardSize);
+};
 
 
 

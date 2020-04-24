@@ -71,4 +71,16 @@ void GridAreas(std::string filepath) {
 
 }
 
+GameBoard::GameBoard(int boardSize) {
+  board_size_ = boardSize;
+
+  int count = 0;
+  for (int i = 0; i < boardSize; i++) {
+    for (int j = 0; j < boardSize; j++) {
+      grid_[i][j] = count;
+      count++;
+    }
+  }
+
+}
 }  // namespace mylibrary
