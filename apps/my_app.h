@@ -17,15 +17,16 @@ class MyApp : public cinder::app::App {
   void update() override;
   void draw() override;
   void keyDown(cinder::app::KeyEvent) override;
+  void mouseDown(cinder::app::MouseEvent) override;
 
   pretzel::PretzelGuiRef gui;
   float mRadius;
-  void onButtonPress();
   std::string mFps;
   cinder::gl::TextureRef		mTexture;
 
   mylibrary::GameBoard game_board_;
   void DrawBoard();
+  void PrintNum();
 };
 
 

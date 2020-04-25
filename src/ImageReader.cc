@@ -76,7 +76,7 @@ GameBoard::GameBoard(int boardSize) {
   std::vector<int> one(boardSize,'0');
   std::vector<std::vector<int>> two(boardSize,one);
 
-  int count = 0;
+  int count = 1;
   for (int i = 0; i < boardSize; i++) {
     for (int j = 0; j < boardSize; j++) {
       two[j][i] = count;
@@ -84,14 +84,24 @@ GameBoard::GameBoard(int boardSize) {
     }
   }
   grid_ = two;
+  current_grid_ = two;
 }
 
 GameBoard::GameBoard() {
   board_size_ = 3;
   mode_ = "default";
 }
-void GameBoard::Move(int x, int y, std::string direction) {
+void GameBoard::MoveUp(int num) {
+  for (int i = 0; i < board_size_; i++) {
+    for (int j = 0; j < board_size_; j++) {
+      if (grid_[j][i] == num) {
+        if (i != 0) {
+          grid_[j][i] = grid_[j][i - 1];
+          grid_[j][i - 1] = num;
+        }
+      }
+    }
+  }
 }
-
 
 }  // namespace mylibrary

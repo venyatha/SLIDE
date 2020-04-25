@@ -15,7 +15,23 @@ TEST_CASE("Random sanity test", "[random]") {
 
 TEST_CASE("constructor") {
   mylibrary::GameBoard g(3);
-  REQUIRE(g.grid_[0][0] == 0);
-  REQUIRE(g.grid_[1][0] == 1);
+  REQUIRE(g.grid_[0][0] == 1);
+  REQUIRE(g.grid_[1][0] == 2);
   REQUIRE(g.grid_[2][2] == 9);
+}
+
+TEST_CASE("move up") {
+  mylibrary::GameBoard g(3);
+  g.MoveUp(5);
+  REQUIRE(g.grid_[1][0] == 5);
+  REQUIRE(g.grid_[1][1] == 2);
+
+}
+
+TEST_CASE("illegal move up") {
+  mylibrary::GameBoard g(3);
+  g.MoveUp(2);
+  REQUIRE(g.grid_[1][0] == 2);
+  REQUIRE(g.grid_[1][1] == 5);
+
 }
