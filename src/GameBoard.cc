@@ -3,8 +3,10 @@
 #include <mylibrary/GameBoard.h>
 
 #include <string>
+#include <cmath>
 
 namespace mylibrary {
+
 GameBoard::GameBoard(int size) {
   board_size_ = size;
 
@@ -16,9 +18,10 @@ GameBoard::GameBoard(int size) {
     for (int x = 0; x < board_size_; x++) {
       if (count == board_size_ * board_size_) {
         vec[x][y] = Tile(count, true);
+      } else {
+        vec[x][y] = Tile(count);
+        count++;
       }
-      vec[x][y] = Tile(count);
-      count++;
     }
   }
   grid_ = vec;
@@ -26,21 +29,69 @@ GameBoard::GameBoard(int size) {
 
 }
 
-void GameBoard::MoveTile(int x, int y, Direction dir) {
-/*
-  if (dir == Direction::kUp && y != 0) {
-    int temp = grid_[x][y];
-    grid_[x][y] = grid_[x][y - 1];
-    grid_[x][y - 1] = temp;
+bool GameBoard::IsNullTile(int x, int y) {
+  return grid_[x][y].null_tile_;
+}
 
-  } else if (dir == Direction::kDown && y != board_size_ - 1) {
-    int temp = grid_[x][y];
-    grid_[x][y] = grid_[x][y - 1];
-    grid_[x][y - 1] = temp;
+void GameBoard::MoveTile(int x, int y, Direction dir) {
+
+  if (dir == Direction::kUp && y != 0 && IsNullTile(x,y-1)) {
+    Tile temp = grid_[x][y - 1];
+    grid_[x][y - 1] = grid_[x][y];
+    grid_[x][y] = temp;
+
+  } else if (dir == Direction::kDown && y != board_size_ - 1 && IsNullTile(x,y+1)) {
+    Tile temp = grid_[x][y + 1];
+    grid_[x][y + 1] = grid_[x][y];
+    grid_[x][y] = temp;
+
+  } else if (dir == Direction::kRight && x != board_size_ - 1 && IsNullTile(x+1,y)) {
+    Tile temp = grid_[x+1][y];
+    grid_[x+1][y] = grid_[x][y];
+    grid_[x][y] = temp;
+
+  } else if (dir == Direction::kRight && x != 0 && IsNullTile(x-1,y)) {
+    Tile temp = grid_[x-1][y];
+    grid_[x-1][y] = grid_[x][y];
+    grid_[x][y] = temp;
   }
-*/
 
 }
+
+std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard) {
+  for (int i = 0; i < gameBoard.board_size_; i++) {
+    for (int j = 0; j < gameBoard.board_size_; j++) {
+      os << gameBoard.grid_[j][i].num_;
+    }
+    os << "\n";
+  }
+  return os;
+}
+bool GameBoard::CheckWin() {
+  if (grid_ == solution_) {
+    return true;
+  }
+  return false;
+}
+
+void GameBoard::SwapTiles(int i, int j, int k, int l) {
+  Tile temp = grid_[i][j];
+  grid_[i][j] = grid_[k][l];
+  grid_[k][l] = temp;
+}
+
+void GameBoard::Shuffle() {
+  for (int i = 0; i < board_size_; ++i) {
+    for (int j = 0; j < board_size_; ++j) {
+      int k = floor(rand()%board_size_);
+      int l = floor(rand()%board_size_);
+      SwapTiles(i, j, k, l);
+    }
+  }
+}
+
+
+}  // namespace mylibrary
 
 /*
 GameBoard::GameBoard(int boardSize) {
@@ -124,8 +175,3 @@ void GameBoard::MoveTile(int x, int y, Direction dir) {
 
 }
 */
-
-
-
-
-}  // namespace mylibrary

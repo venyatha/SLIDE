@@ -43,6 +43,11 @@ class GameBoard {
   //check win
 
   void MoveTile(int x, int y, Direction dir);
+  bool IsNullTile(int x, int y);
+  friend std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard);
+  void Shuffle();
+  bool CheckWin();
+  void SwapTiles(int i, int j, int k, int l);
 };
 
 
