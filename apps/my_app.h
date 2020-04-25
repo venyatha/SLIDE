@@ -4,7 +4,7 @@
 #define FINALPROJECT_APPS_MYAPP_H_
 
 #include <cinder/app/App.h>
-#include <mylibrary/ImageReader.h>
+#include <mylibrary/GameBoard.h>
 #include <pretzel/PretzelGui.h>
 
 namespace myapp {
