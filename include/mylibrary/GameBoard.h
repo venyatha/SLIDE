@@ -48,6 +48,7 @@ class GameBoard {
   void Shuffle();
   bool CheckWin();
   void SwapTiles(int i, int j, int k, int l);
+  void ShuffleGameBoard();
 };
 
 

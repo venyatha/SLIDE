@@ -22,11 +22,14 @@ class MyApp : public cinder::app::App {
   pretzel::PretzelGuiRef gui;
   float mRadius;
   std::string mFps;
-  cinder::gl::TextureRef		mTexture;
+  cinder::gl::TextureRef mTexture;
+  std::vector<int> tile_x_;
+  std::vector<int> tile_y_;
 
   mylibrary::GameBoard game_board_;
   void DrawBoard();
   void PrintNum();
+  void DrawEndScreen();
 };
 
 

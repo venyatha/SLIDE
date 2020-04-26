@@ -77,5 +77,19 @@ TEST_CASE("shuffle") {
   g.Shuffle();
   std::ostringstream os;
   os << g;
-  REQUIRE(os.str() == "123\n456\n789\n");
+  REQUIRE(os.str() != "123\n456\n789\n");
+}
+
+TEST_CASE("shuffle board") {
+  mylibrary::GameBoard g(3);
+  g.Shuffle();
+  std::ostringstream os;
+  os << g;
+
+  mylibrary::GameBoard b(3);
+  b.ShuffleGameBoard();
+  std::ostringstream os2;
+  os2 << b;
+
+  REQUIRE(os.str() != os2.str());
 }

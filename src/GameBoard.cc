@@ -90,6 +90,13 @@ void GameBoard::Shuffle() {
   }
 }
 
+void GameBoard::ShuffleGameBoard() {
+  int r = rand()%100;
+  for (int i = 0; i < r; i++) {
+    Shuffle();
+  }
+}
+
 
 }  // namespace mylibrary
 

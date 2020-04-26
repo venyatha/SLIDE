@@ -7,10 +7,11 @@
     
  - **4/25/20** Need to complete the following:
     - [x] draw text on the grid
-    - [ ] write GameBoard class and related functions
-    - [ ] write tests for GameBoard class
+    - [x] write GameBoard class and related functions
+    - [x] write tests for GameBoard class
     
  - **4/26/20** Need to complete the following:
-    - [ ] draw the shuffled board correctly
-    - [ ] make the game responsive to clicks      
+    - [x] draw the shuffled board on ui
+    - [x] make the game responsive to clicks
+    - [ ] determine if player has won     
     
