@@ -23,20 +23,26 @@ void MyApp::setup() {
   gui->setSize(cinder::vec2(10,10));
   gui->setPos(cinder::vec2(1000,10));
 
-  gui->addSlider("Puzzle Size", &mRadius, 2, 100);
+  gui->addSlider("Puzzle Size", &grid_size_, 2, 5);
 
   gui->addSaveLoad();
   gui->loadSettings();    // load the last saved settings automatically
 
   //game_board_.ShuffleGameBoard();
+  //std::cout << game_board_.isSolvable() << std::endl;
 
   //ci::gl::enableAlphaBlending();
 }
 
 void MyApp::update() {
-  if (game_board_.CheckWin()) {
 
+
+  if (game_board_.CheckWin()) {
+    won_game_ = true;
   }
+
+
+
 }
 
 void MyApp::draw() {
@@ -46,10 +52,17 @@ void MyApp::draw() {
   //DrawBoard();
   gui->drawAll();
 
+  if (won_game_) {
+    DrawEndScreen();
+  } else {
+    cinder::gl::translate(-360,-250);
+    DrawBoard();
+  }
+
   //PrintNum();
   //cinder::gl::drawStringCentered ("text", getWindowCenter(),cinder::ColorA(1, 0, 0, 1), cinder::Font("Arial", 30));
-  cinder::gl::translate(-360,-250);
-  DrawBoard();
+  //cinder::gl::translate(-360,-250);
+  //DrawBoard();
   /*
   cinder::gl::setMatricesWindow( getWindowSize() );
   cinder::Rectf drawRect( 0, 0, getWindowWidth(),
@@ -64,7 +77,9 @@ void MyApp::draw() {
 }
 
 void MyApp::DrawEndScreen() {
-  
+  cinder::gl::clear(cinder::Color::white());
+  cinder::gl::translate(getWindowCenter().x, getWindowCenter().y);
+  PrintNum();
 }
 
 
@@ -76,7 +91,7 @@ void MyApp::PrintNum() {
   box.setFont(cinder::Font("Arial", 30));
   box.setColor(cinder::Color(0,1,0));
   box.setBackgroundColor(cinder::ColorA(0,0,0,0));
-  box.setText("text");
+  box.setText("You won!");
 
   const auto box_size = box.getSize();
   const cinder::vec2 locp = {50 - box_size.x / 2, 50 - box_size.y / 2};

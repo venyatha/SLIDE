@@ -4,28 +4,30 @@
 
 #include <string>
 #include <cmath>
+#include <random>
 
 namespace mylibrary {
 
 GameBoard::GameBoard(int size) {
   board_size_ = size;
 
-  std::vector<Tile> temp_vec(board_size_,Tile(0));
+  std::vector<Tile> temp_vec(board_size_,Tile(0,0,0));
   std::vector<std::vector<Tile>> vec(board_size_,temp_vec);
 
   int count = 1;
   for (int y = 0; y < board_size_; y++) {
     for (int x = 0; x < board_size_; x++) {
       if (count == board_size_ * board_size_) {
-        vec[x][y] = Tile(count, true);
+        vec[x][y] = Tile(x,y,count, true);
       } else {
-        vec[x][y] = Tile(count);
+        vec[x][y] = Tile(x,y,count);
         count++;
       }
     }
   }
   grid_ = vec;
   solution_ = vec;
+  ShuffleGameBoard();
 
 }
 
@@ -90,11 +92,122 @@ void GameBoard::Shuffle() {
   }
 }
 
-void GameBoard::ShuffleGameBoard() {
-  int r = rand()%100;
+void GameBoard::ShuffleBoard() {
+  int r = rand()%10000;
+
   for (int i = 0; i < r; i++) {
-    Shuffle();
+
+    int d = rand()%4;
+    Direction dir;
+    if (d == 1) {
+      dir = Direction::kDown;
+    } else if (d == 2) {
+      dir = Direction::kLeft;
+    } else if (d == 3) {
+      dir = Direction::kRight;
+    } else {
+      dir = Direction::kUp;
+    }
+
+    int x = (rand()%board_size_);
+    int y = (rand()%board_size_);
+
+    MoveTile(x, y, dir);
   }
+
+
+}
+
+void GameBoard::ShuffleGameBoard() {
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  std::uniform_real_distribution<double> dist(1.0, 1000.0);
+  //for (int i=0; i<16; ++i) {
+  //  std::cout << ceil(dist(mt)) << "\n";
+  //}
+
+  int r = ceil(dist(mt));
+  //int r = rand()%1000;
+
+  for (int i = 0; i < r; i++) {
+    ShuffleBoard();
+  }
+
+  std::cout << isSolvable() << std::endl;
+
+}
+
+/*
+void GameBoard::ShuffleBoard() {
+  if (!isSolvable()) {
+    if (emptyLoc.y == 0 && emptyLoc.x <= 1) {
+      SwapTiles(board_size_ - 2, board_size_ - 1, board_size_ - 1, board_size_ - 1);
+    } else {
+      SwapTiles(0, 0, 1, 0);
+    }
+    initEmpty();
+  }
+}
+*/
+/*
+void GameBoard::ShuffleBoard() {
+  int r = rand()%10000;
+
+  for (int i = 0; i < r; i++) {
+
+    int d = rand()%4;
+    Direction dir;
+    if (d == 1) {
+      dir = Direction::kDown;
+    } else if (d == 2) {
+      dir = Direction::kLeft;
+    } else if (d == 3) {
+      dir = Direction::kRight;
+    } else {
+      dir = Direction::kUp;
+    }
+
+    int x = (rand()%board_size_);
+    int y = (rand()%board_size_);
+
+    MoveTile(x, y, dir);
+  }
+
+
+}
+ */
+
+
+int GameBoard::countInversions(int i, int j) {
+  int inversions = 0;
+  int tileNum = j * board_size_ + i;
+  int lastTile = board_size_ * board_size_;
+  int tileValue = grid_[i][j].y * board_size_ + grid_[i][j].x;
+  for (int q = tileNum + 1; q < lastTile; ++q) {
+    int k = q % board_size_;
+    int l = floor(q / board_size_);
+
+    int compValue = grid_[k][l].y * board_size_ + grid_[k][l].x;
+    if (tileValue > compValue && tileValue != (lastTile - 1)) {
+      ++inversions;
+    }
+  }
+  return inversions;
+}
+
+
+int GameBoard::sumInversions() {
+  int inversions = 0;
+  for (int j = 0; j < board_size_; ++j) {
+    for (int i = 0; i < board_size_; ++i) {
+      inversions += countInversions(i, j);
+    }
+  }
+  return inversions;
+}
+
+bool GameBoard::isSolvable() {
+  return (sumInversions() % 2 == 0);
 }
 
 

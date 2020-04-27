@@ -49,6 +49,10 @@ class GameBoard {
   bool CheckWin();
   void SwapTiles(int i, int j, int k, int l);
   void ShuffleGameBoard();
+  void ShuffleBoard();
+  int countInversions(int i, int j);
+  int sumInversions();
+  bool isSolvable();
 };
 
 

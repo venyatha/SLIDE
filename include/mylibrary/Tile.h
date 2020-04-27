@@ -11,9 +11,11 @@ class Tile {
 
   int num_;
   bool null_tile_;
+  int x;
+  int y;
 
-  Tile(int num, bool b);
-  explicit Tile(int num);
+  Tile(int x, int y, int num, bool b);
+  explicit Tile(int x, int y, int num);
 
   bool operator==(const Tile& rhs) const;
 };

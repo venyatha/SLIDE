@@ -21,10 +21,12 @@ class MyApp : public cinder::app::App {
 
   pretzel::PretzelGuiRef gui;
   float mRadius;
+  int grid_size_;
   std::string mFps;
   cinder::gl::TextureRef mTexture;
   std::vector<int> tile_x_;
   std::vector<int> tile_y_;
+  bool won_game_ = false;
 
   mylibrary::GameBoard game_board_;
   void DrawBoard();
