@@ -21,9 +21,7 @@ Tile::Tile(int x_val, int y_val, int num) {
 }
 
 bool Tile::operator==(const Tile& rhs) const {
-  if (num_ == rhs.num_ && null_tile_ == rhs.null_tile_) {
-    return true;
-  }
+  return num_ == rhs.num_ && null_tile_ == rhs.null_tile_;
 }
 
 }  // namespace mylibrary

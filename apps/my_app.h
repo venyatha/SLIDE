@@ -20,8 +20,7 @@ class MyApp : public cinder::app::App {
   void mouseDown(cinder::app::MouseEvent) override;
 
   pretzel::PretzelGuiRef gui;
-  float mRadius;
-  int grid_size_;
+  int grid_size_ = 4;
   std::string mFps;
   cinder::gl::TextureRef mTexture;
   std::vector<int> tile_x_;
@@ -32,6 +31,9 @@ class MyApp : public cinder::app::App {
   void DrawBoard();
   void PrintNum();
   void DrawEndScreen();
+  void DrawGrid();
+  void ShuffleButton();
+  void UpdateButton();
 };
 
 

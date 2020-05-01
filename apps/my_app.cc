@@ -11,37 +11,42 @@ namespace myapp {
 
 using cinder::app::KeyEvent;
 
-MyApp::MyApp() :game_board_(3) {};
+MyApp::MyApp() :game_board_(2){};
 
 void MyApp::setup() {
-  auto img = loadImage( loadAsset( "colourwheel.jpeg" ) );
-  mTexture = cinder::gl::Texture::create( img );
-  //mylibrary::GridAreas("string");
-
-  mRadius = 25;
   gui = pretzel::PretzelGui::create("Puzzle settings");
   gui->setSize(cinder::vec2(10,10));
   gui->setPos(cinder::vec2(1000,10));
 
   gui->addSlider("Puzzle Size", &grid_size_, 2, 5);
+  gui->addButton("Shuffle", &MyApp::ShuffleButton, this);
+  gui->addButton("Update", &MyApp::UpdateButton, this);
 
   gui->addSaveLoad();
   gui->loadSettings();    // load the last saved settings automatically
 
-  //game_board_.ShuffleGameBoard();
-  //std::cout << game_board_.isSolvable() << std::endl;
+  game_board_.ShuffleBoard();
 
   //ci::gl::enableAlphaBlending();
 }
 
-void MyApp::update() {
+void MyApp::ShuffleButton() {
+  game_board_.ShuffleBoard();
+}
 
+void MyApp::UpdateButton() {
+  game_board_.Reset(grid_size_);
+  game_board_.ShuffleBoard();
+  if (won_game_) {
+    won_game_ = false;
+  }
+}
+
+void MyApp::update() {
 
   if (game_board_.CheckWin()) {
     won_game_ = true;
   }
-
-
 
 }
 
@@ -49,30 +54,14 @@ void MyApp::draw() {
   cinder::gl::setMatricesWindow( getWindowSize() );
 
   cinder::gl::clear(cinder::Color::white());
-  //DrawBoard();
   gui->drawAll();
 
   if (won_game_) {
     DrawEndScreen();
   } else {
     cinder::gl::translate(-360,-250);
-    DrawBoard();
+    DrawGrid();
   }
-
-  //PrintNum();
-  //cinder::gl::drawStringCentered ("text", getWindowCenter(),cinder::ColorA(1, 0, 0, 1), cinder::Font("Arial", 30));
-  //cinder::gl::translate(-360,-250);
-  //DrawBoard();
-  /*
-  cinder::gl::setMatricesWindow( getWindowSize() );
-  cinder::Rectf drawRect( 0, 0, getWindowWidth(),
-                          getWindowHeight());
-  cinder::gl::draw(mTexture, drawRect);
-  cinder::gl::color( cinder::Color( 1, 0, 0 ) );
-  cinder::gl::drawSolidCircle(cinder::vec2(getWindowCenter()), mRadius);
-     cinder::gl::enableAlphaBlending();
-
-   */
 
 }
 
@@ -102,16 +91,10 @@ void MyApp::PrintNum() {
 }
 
 void MyApp::DrawBoard() {
-
-  //cinder::gl::translate( getWindowCenter().x, 75 );
-  ;
   cinder::gl::translate( getWindowCenter().x, getWindowCenter().y);
   cinder::gl::translate(-200,-100);
 
-
   for (int i = 0; i < 3; i++) {
-    //cinder::gl::translate( getWindowCenter().x, getWindowCenter().y);
-    //cinder::gl::translate(-200,-100);
     for (int j = 0; j < 3; j++) {
 
       cinder::gl::color( cinder::Color( 0, 1, 0 ) );
@@ -127,7 +110,8 @@ void MyApp::DrawBoard() {
       if (game_board_.grid_[j][i].num_ != game_board_.board_size_*game_board_.board_size_) {
         std::string str = std::to_string(game_board_.grid_[j][i].num_);
         cinder::gl::drawStringCentered (str, cinder::ivec2(150,100),
-                                        cinder::ColorA(1, 0, 0, 1), cinder::Font("Arial", 30));
+                                        cinder::ColorA(1, 0, 0, 1),
+                                        cinder::Font("Arial", 30));
       }
 
       cinder::gl::translate(300,0);
@@ -136,6 +120,51 @@ void MyApp::DrawBoard() {
       tile_y_.push_back(250 + i*200);
     }
     cinder::gl::translate(-900,200);
+  }
+
+}
+
+void MyApp::DrawGrid() {
+  cinder::gl::translate( getWindowCenter().x, getWindowCenter().y);
+  cinder::gl::translate(-200,-100);
+
+  float x = 800 / game_board_.board_size_;
+  float y = 600 / game_board_.board_size_;
+
+
+  for (int i = 0; i < game_board_.board_size_; i++) {
+    for (int j = 0; j < game_board_.board_size_; j++) {
+
+      cinder::gl::color( cinder::Color( 0, 1, 0 ) );
+      //cinder::Area area(0,0,200,150);
+
+      cinder::Area area(0,0,x,y);
+
+
+      if (tile_x_.size() < game_board_.board_size_) {
+        tile_x_.push_back(240 + j*x);
+      }
+
+
+      cinder::Rectf rect(area);
+      cinder::gl::drawStrokedRect(rect);
+
+
+      if (game_board_.grid_[j][i].num_ != game_board_.board_size_*game_board_.board_size_) {
+        std::string str = std::to_string(game_board_.grid_[j][i].num_);
+        cinder::gl::drawStringCentered (str, cinder::ivec2(150,100),
+                                        cinder::ColorA(1, 0, 0, 1),
+                                        cinder::Font("Arial", 30));
+      }
+
+
+
+      cinder::gl::translate(x,0);
+    }
+    if (tile_y_.size() < game_board_.board_size_) {
+      tile_y_.push_back(x + i*y);
+    }
+    cinder::gl::translate(-(x*game_board_.board_size_),y);
   }
 
 }
@@ -149,10 +178,9 @@ void MyApp::keyDown(KeyEvent event) {
 
 }
 void MyApp::mouseDown(cinder::app::MouseEvent event) {
-  //AppBase::mouseDown(<unnamed>);
-  //std::cout << event.getX() << " " << event.getY() << std::endl;
-
+  std::cout << event.getX() << " " << event.getY() << std::endl;
   std::vector<std::vector<mylibrary::Tile>> pre_move = game_board_.grid_;
+
 
   for (int y = 0; y < tile_y_.size(); y++) {
     for (int x = 0; x < tile_x_.size(); x++) {
@@ -170,39 +198,9 @@ void MyApp::mouseDown(cinder::app::MouseEvent event) {
           return;
         }
         return;
-
-        game_board_.MoveTile(x,y,mylibrary::Direction::kRight);
-        game_board_.MoveTile(x,y,mylibrary::Direction::kLeft);
       }
     }
   }
-
-
-
-  /*
-  for (const auto& pos : tile_positions) {
-    if (event.getX() <= pos.x && event.getY() <= pos.y) {
-      //game_board_.MoveTile(x,y,mylibrary::Direction::kDown);
-      //game_board_.MoveTile(x,y,mylibrary::Direction::kUp);
-      //game_board_.MoveTile(x,y,mylibrary::Direction::kRight);
-      //game_board_.MoveTile(x,y,mylibrary::Direction::kLeft);
-    }
-  }
-   */
-  //cinder::gl::translate( getWindowCenter().x, getWindowCenter().y);
-  //cinder::gl::translate(-200,-100);
-
-
-  //int current_x = 40;
-  //int current_y = 50;
-  //int x = 0;
-  //int y = 0;
-  //while (event.getX() <= current_x && event.getY() <= current_y) {
-  //
-  //
-  //}
-  //game_board_.MoveTile(x,y,mylibrary::Direction::kDown);
-
 }
 
 }  // namespace myapp

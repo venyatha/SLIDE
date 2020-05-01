@@ -53,6 +53,7 @@ class GameBoard {
   int countInversions(int i, int j);
   int sumInversions();
   bool isSolvable();
+  void Reset(int num);
 };
 
 

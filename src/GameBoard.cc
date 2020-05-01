@@ -27,8 +27,29 @@ GameBoard::GameBoard(int size) {
   }
   grid_ = vec;
   solution_ = vec;
-  ShuffleGameBoard();
+  //ShuffleBoard();
 
+}
+
+void GameBoard::Reset(int num) {
+  board_size_ = num;
+
+  std::vector<Tile> temp_vec(board_size_,Tile(0,0,0));
+  std::vector<std::vector<Tile>> vec(board_size_,temp_vec);
+
+  int count = 1;
+  for (int y = 0; y < board_size_; y++) {
+    for (int x = 0; x < board_size_; x++) {
+      if (count == board_size_ * board_size_) {
+        vec[x][y] = Tile(x,y,count, true);
+      } else {
+        vec[x][y] = Tile(x,y,count);
+        count++;
+      }
+    }
+  }
+  grid_ = vec;
+  solution_ = vec;
 }
 
 bool GameBoard::IsNullTile(int x, int y) {
@@ -69,12 +90,7 @@ std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard) {
   }
   return os;
 }
-bool GameBoard::CheckWin() {
-  if (grid_ == solution_) {
-    return true;
-  }
-  return false;
-}
+bool GameBoard::CheckWin() { return grid_ == solution_; }
 
 void GameBoard::SwapTiles(int i, int j, int k, int l) {
   Tile temp = grid_[i][j];
@@ -93,7 +109,11 @@ void GameBoard::Shuffle() {
 }
 
 void GameBoard::ShuffleBoard() {
-  int r = rand()%10000;
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  std::uniform_real_distribution<double> dist(1000.0, 3000.0);
+
+  int r = ceil(dist(mt));
 
   for (int i = 0; i < r; i++) {
 

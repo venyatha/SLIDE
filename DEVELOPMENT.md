@@ -18,4 +18,4 @@
       
  - **4/26/20** Need to do:
     - [x] checks if the game is solvable
-    - [ ] start to make game extendable to different board sizes  
+
