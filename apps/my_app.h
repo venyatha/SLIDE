@@ -21,24 +21,22 @@ class MyApp : public cinder::app::App {
 
   pretzel::PretzelGuiRef gui;
   int grid_size_ = 4;
-  std::string mFps;
   //cinder::gl::TextureRef mTexture;
   cinder::Surface surface;
   std::vector<int> tile_x_;
   std::vector<int> tile_y_;
   bool won_game_ = false;
+  bool picture_game_ = false;
   int score = 0;
   std::vector<cinder::gl::Texture2dRef> texture_vec_;
 
   mylibrary::GameBoard game_board_;
   void PrintNum();
-  void DrawEndScreen();
   void DrawGrid();
   void ShuffleButton();
   void UpdateButton();
   void DrawScore();
 
-  //cinder::gl::Texture2dRef MakeTexture(int x, int y);
   cinder::gl::Texture2dRef MakeTexture(int x, int y);
   std::vector<cinder::gl::Texture2dRef> MakeTexturesVec();
 };

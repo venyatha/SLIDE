@@ -15,17 +15,9 @@ using cinder::app::KeyEvent;
 MyApp::MyApp() :game_board_(3){};
 
 void MyApp::setup() {
-  //auto img = cinder::loadImage( "/Users/mannev1/Desktop/cinder_0.9.2_mac/my-projects/final-project-vmanne3/assets/colourwheel.jpeg" );
-  //surface = cinder::Surface(img);
-  //mTexture = cinder::gl::Texture2d::create( img );
-  //mTexture->setCleanBounds(cinder::Area(200,200,500,400));
-
-  //mTexture = MakeTexture(100,0);
-
   surface = cinder::Surface(cinder::loadImage("/Users/mannev1/Desktop/cinder_0.9.2_mac/"
                                               "my-projects/final-project-vmanne3/assets/colourwheel.jpeg"));
   texture_vec_ = MakeTexturesVec();
-
 
   gui = pretzel::PretzelGui::create("Puzzle settings");
   gui->setSize(cinder::vec2(20,10));
@@ -34,6 +26,7 @@ void MyApp::setup() {
   gui->addSlider("Grid Size", &grid_size_, 3, 7);
   gui->addButton("Shuffle", &MyApp::ShuffleButton, this);
   gui->addButton("Update", &MyApp::UpdateButton, this);
+  gui->addToggle("Picture mode", &picture_game_);
 
   //gui->addSaveLoad();
   //gui->loadSettings();    // load the last saved settings automatically
@@ -43,7 +36,7 @@ void MyApp::setup() {
   //ci::gl::enableAlphaBlending();
 }
 cinder::gl::Texture2dRef MyApp::MakeTexture(int x, int y) {
-  cinder::Surface s(300,200,false);
+  cinder::Surface s(267,200,false);
   for (int i = 0; i < 267; i++) {
     for (int j = 0; j < 200; j++) {
       s.setPixel(cinder::ivec2(i,j),surface.getPixel(cinder::ivec2(i+x,j+y)));
@@ -61,14 +54,6 @@ std::vector<cinder::gl::Texture2dRef> MyApp::MakeTexturesVec() {
       toReturn.push_back(MakeTexture(x,y));
     }
   }
-
-  /*
-  for (int x = 0; x <= 900; x = x+300) {
-    for (int y = 0; y <= 600; y = y+200) {
-      toReturn.push_back(MakeTexture(x,y));
-    }
-  }
-   */
   return toReturn;
 }
 
@@ -82,9 +67,7 @@ void MyApp::UpdateButton() {
   tile_x_.clear();
   tile_y_.clear();
   score = 0;
-  if (won_game_) {
-    won_game_ = false;
-  }
+  picture_game_ = false;
 }
 
 void MyApp::update() {
@@ -92,32 +75,29 @@ void MyApp::update() {
     won_game_ = true;
   }
 
+  if (picture_game_ && grid_size_ !=3) {
+    grid_size_ = 3;
+    game_board_.Reset(grid_size_);
+    game_board_.ShuffleBoard();
+    tile_x_.clear();
+    tile_y_.clear();
+    score = 0;
+  }
+
 }
 
 void MyApp::draw() {
-  //cinder::gl::clear();
-  //mTexture->setCleanBounds(cinder::Area(200,200,600,600));
-  //cinder::Rectf rect(cinder::Area(0,0,300,200));
-  //cinder::gl::draw( mTexture, rect );
-  //cinder::gl::draw( mTexture );
-
   cinder::gl::setMatricesWindow( getWindowSize() );
-
   cinder::gl::clear(cinder::Color::white());
   gui->drawAll();
 
-
+  cinder::gl::translate(-360,-250);
+  DrawGrid();
+  DrawScore();
   if (won_game_) {
-    DrawEndScreen();
-  } else {
-    //cinder::Rectf rectangle(cinder::Area(0,0,300,200));
-    //cinder::gl::draw( mTexture, rectangle );
-    cinder::gl::translate(-360,-250);
-    DrawGrid();
-    DrawScore();
+    //cinder::gl::translate(getWindowCenter().x, getWindowCenter().y);
+    PrintNum();
   }
-
-
 }
 
 void MyApp::DrawScore() {
@@ -137,13 +117,6 @@ void MyApp::DrawScore() {
   const auto texture = cinder::gl::Texture::create(surface);
   cinder::gl::draw(texture, locp);
 }
-
-void MyApp::DrawEndScreen() {
-  cinder::gl::clear(cinder::Color::white());
-  cinder::gl::translate(getWindowCenter().x, getWindowCenter().y);
-  PrintNum();
-}
-
 
 void MyApp::PrintNum() {
   cinder::gl::color(cinder::Color(0,0,1));
@@ -170,42 +143,32 @@ void MyApp::DrawGrid() {
   float x = 800 / game_board_.board_size_;
   float y = 600 / game_board_.board_size_;
 
-
   for (int i = 0; i < game_board_.board_size_; i++) {
     for (int j = 0; j < game_board_.board_size_; j++) {
-
-      //cinder::gl::color( cinder::Color( 0, 1, 0 ) );
-      //cinder::Area area(0,0,200,150);
-
-      cinder::Area area(0,0,x,y);
-
 
       if (tile_x_.size() < game_board_.board_size_) {
         tile_x_.push_back(240 + j*x);
       }
 
-      //cinder::Rectf rectangle(cinder::Area(0,0,300,200));
-      //cinder::gl::draw( mTexture, rectangle );
-      //cinder::Rectf rect(area);
-      //cinder::gl::drawStrokedRect(rect);
-      //cinder::Rectf rectangle(cinder::Area(0,0,300,200));
-      //cinder::gl::draw( mTexture, rectangle );
-
+      if (!picture_game_) {
+        cinder::gl::color( cinder::Color( 0, 1, 0 ) );
+        cinder::gl::drawStrokedRect(cinder::Rectf(cinder::Area(0,0,x,y)));
+      }
 
       if (game_board_.grid_[j][i].num_ != game_board_.board_size_*game_board_.board_size_) {
-        cinder::Rectf rectangle(cinder::Area(0,0,300,y));
-        cinder::gl::draw( texture_vec_[game_board_.grid_[j][i].num_ - 1], rectangle );
-
+        if (picture_game_) {
+          cinder::Rectf rectangle(cinder::Area(0,0,x,y));
+          cinder::gl::draw( texture_vec_[game_board_.grid_[j][i].num_ - 1], rectangle );
+        }
         std::string str = std::to_string(game_board_.grid_[j][i].num_);
         cinder::gl::drawStringCentered (str, cinder::ivec2(x/2,y/2),
                                         cinder::ColorA(1, 0, 0, 1),
                                         cinder::Font("Arial", 30));
       }
 
-
-
       cinder::gl::translate(x,0);
     }
+
     if (tile_y_.size() < game_board_.board_size_) {
       tile_y_.push_back(x + i*y);
     }
