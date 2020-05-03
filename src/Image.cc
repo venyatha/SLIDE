@@ -6,9 +6,39 @@
 
 #include <mylibrary/GameBoard.h>
 
+#include "cinder/gl/Texture.h"
 #include <string>
 
 namespace mylibrary {
+
+/*
+cinder::gl::Texture2dRef MakeTexture(int x, int y) {
+  cinder::Surface s(300,200,false);
+  for (int i = 0; i < 300; i++) {
+    for (int j = 0; j < 200; j++) {
+      s.setPixel(cinder::ivec2(i,j),surface.getPixel(cinder::ivec2(i+x,j+y)));
+    }
+  }
+  cinder::gl::TextureRef texture = cinder::gl::Texture2d::create(s);
+  return texture;
+}
+
+std::vector<cinder::gl::Texture2dRef> MakeTexturesVec(std::string filepath) {
+  surface = cinder::Surface(cinder::loadImage(filepath));
+  std::vector<cinder::gl::Texture2dRef> toReturn;
+
+  for (int x = 0; x <= 900; x = x+300) {
+    for (int y = 0; y <= 600; y = y+200) {
+      toReturn.push_back(MakeTexture(x,y));
+    }
+  }
+
+  return toReturn;
+}
+*/
+
+
+
 void GridAreas(std::string filepath) {
 
   //cinder::ImageSourceRef img = cinder::loadImage( "/Users/mannev1/Desktop/cinder_0.9.2_mac/"

@@ -5,6 +5,7 @@
 #include <cinder/GeomIo.h>
 #include <cinder/app/App.h>
 #include <mylibrary/GameBoard.h>
+#include <mylibrary/Image.h>
 #include <pretzel/PretzelGui.h>
 
 namespace myapp {
@@ -14,9 +15,17 @@ using cinder::app::KeyEvent;
 MyApp::MyApp() :game_board_(3){};
 
 void MyApp::setup() {
-  auto img = loadImage( loadAsset( "colourwheel.jpeg" ) );
-  mTexture = cinder::gl::Texture2d::create( img );
-  mTexture->setCleanBounds(cinder::Area(200,200,500,400));
+  //auto img = cinder::loadImage( "/Users/mannev1/Desktop/cinder_0.9.2_mac/my-projects/final-project-vmanne3/assets/colourwheel.jpeg" );
+  //surface = cinder::Surface(img);
+  //mTexture = cinder::gl::Texture2d::create( img );
+  //mTexture->setCleanBounds(cinder::Area(200,200,500,400));
+
+  //mTexture = MakeTexture(100,0);
+
+  surface = cinder::Surface(cinder::loadImage("/Users/mannev1/Desktop/cinder_0.9.2_mac/"
+                                              "my-projects/final-project-vmanne3/assets/colourwheel.jpeg"));
+  texture_vec_ = MakeTexturesVec();
+
 
   gui = pretzel::PretzelGui::create("Puzzle settings");
   gui->setSize(cinder::vec2(20,10));
@@ -26,13 +35,41 @@ void MyApp::setup() {
   gui->addButton("Shuffle", &MyApp::ShuffleButton, this);
   gui->addButton("Update", &MyApp::UpdateButton, this);
 
-
   //gui->addSaveLoad();
   //gui->loadSettings();    // load the last saved settings automatically
 
   game_board_.ShuffleBoard();
 
   //ci::gl::enableAlphaBlending();
+}
+cinder::gl::Texture2dRef MyApp::MakeTexture(int x, int y) {
+  cinder::Surface s(300,200,false);
+  for (int i = 0; i < 267; i++) {
+    for (int j = 0; j < 200; j++) {
+      s.setPixel(cinder::ivec2(i,j),surface.getPixel(cinder::ivec2(i+x,j+y)));
+    }
+  }
+  cinder::gl::TextureRef texture = cinder::gl::Texture2d::create(s);
+  return texture;
+}
+
+std::vector<cinder::gl::Texture2dRef> MyApp::MakeTexturesVec() {
+  std::vector<cinder::gl::Texture2dRef> toReturn;
+
+  for (int y = 0; y < 600; y = y+200) {
+    for (int x = 0; x < 801; x = x+267) {
+      toReturn.push_back(MakeTexture(x,y));
+    }
+  }
+
+  /*
+  for (int x = 0; x <= 900; x = x+300) {
+    for (int y = 0; y <= 600; y = y+200) {
+      toReturn.push_back(MakeTexture(x,y));
+    }
+  }
+   */
+  return toReturn;
 }
 
 void MyApp::ShuffleButton() {
@@ -72,8 +109,9 @@ void MyApp::draw() {
 
   if (won_game_) {
     DrawEndScreen();
-    gui->drawAll();
   } else {
+    //cinder::Rectf rectangle(cinder::Area(0,0,300,200));
+    //cinder::gl::draw( mTexture, rectangle );
     cinder::gl::translate(-360,-250);
     DrawGrid();
     DrawScore();
@@ -136,7 +174,7 @@ void MyApp::DrawGrid() {
   for (int i = 0; i < game_board_.board_size_; i++) {
     for (int j = 0; j < game_board_.board_size_; j++) {
 
-      cinder::gl::color( cinder::Color( 0, 1, 0 ) );
+      //cinder::gl::color( cinder::Color( 0, 1, 0 ) );
       //cinder::Area area(0,0,200,150);
 
       cinder::Area area(0,0,x,y);
@@ -146,13 +184,18 @@ void MyApp::DrawGrid() {
         tile_x_.push_back(240 + j*x);
       }
 
-
-      cinder::Rectf rect(area);
-      cinder::gl::drawStrokedRect(rect);
+      //cinder::Rectf rectangle(cinder::Area(0,0,300,200));
+      //cinder::gl::draw( mTexture, rectangle );
+      //cinder::Rectf rect(area);
+      //cinder::gl::drawStrokedRect(rect);
       //cinder::Rectf rectangle(cinder::Area(0,0,300,200));
       //cinder::gl::draw( mTexture, rectangle );
 
+
       if (game_board_.grid_[j][i].num_ != game_board_.board_size_*game_board_.board_size_) {
+        cinder::Rectf rectangle(cinder::Area(0,0,300,y));
+        cinder::gl::draw( texture_vec_[game_board_.grid_[j][i].num_ - 1], rectangle );
+
         std::string str = std::to_string(game_board_.grid_[j][i].num_);
         cinder::gl::drawStringCentered (str, cinder::ivec2(x/2,y/2),
                                         cinder::ColorA(1, 0, 0, 1),
@@ -193,10 +236,11 @@ void MyApp::mouseDown(cinder::app::MouseEvent event) {
             game_board_.MoveTile(x,y,mylibrary::Direction::kLeft);
             if (pre_move == game_board_.grid_) {
               game_board_.MoveTile(x,y,mylibrary::Direction::kRight);
-              if (pre_move != game_board_.grid_) {
-                score++;
+              if (pre_move == game_board_.grid_) {
                 return;
               }
+              score++;
+              return;
             }
             score++;
             return;
