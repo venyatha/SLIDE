@@ -11,19 +11,24 @@ namespace myapp {
 
 using cinder::app::KeyEvent;
 
-MyApp::MyApp() :game_board_(2){};
+MyApp::MyApp() :game_board_(3){};
 
 void MyApp::setup() {
-  gui = pretzel::PretzelGui::create("Puzzle settings");
-  gui->setSize(cinder::vec2(10,10));
-  gui->setPos(cinder::vec2(1000,10));
+  auto img = loadImage( loadAsset( "colourwheel.jpeg" ) );
+  mTexture = cinder::gl::Texture2d::create( img );
+  mTexture->setCleanBounds(cinder::Area(200,200,500,400));
 
-  gui->addSlider("Puzzle Size", &grid_size_, 2, 5);
+  gui = pretzel::PretzelGui::create("Puzzle settings");
+  gui->setSize(cinder::vec2(20,10));
+  gui->setPos(cinder::vec2(920,50));
+
+  gui->addSlider("Grid Size", &grid_size_, 3, 7);
   gui->addButton("Shuffle", &MyApp::ShuffleButton, this);
   gui->addButton("Update", &MyApp::UpdateButton, this);
 
-  gui->addSaveLoad();
-  gui->loadSettings();    // load the last saved settings automatically
+
+  //gui->addSaveLoad();
+  //gui->loadSettings();    // load the last saved settings automatically
 
   game_board_.ShuffleBoard();
 
@@ -37,13 +42,15 @@ void MyApp::ShuffleButton() {
 void MyApp::UpdateButton() {
   game_board_.Reset(grid_size_);
   game_board_.ShuffleBoard();
+  tile_x_.clear();
+  tile_y_.clear();
+  score = 0;
   if (won_game_) {
     won_game_ = false;
   }
 }
 
 void MyApp::update() {
-
   if (game_board_.CheckWin()) {
     won_game_ = true;
   }
@@ -51,18 +58,46 @@ void MyApp::update() {
 }
 
 void MyApp::draw() {
+  //cinder::gl::clear();
+  //mTexture->setCleanBounds(cinder::Area(200,200,600,600));
+  //cinder::Rectf rect(cinder::Area(0,0,300,200));
+  //cinder::gl::draw( mTexture, rect );
+  //cinder::gl::draw( mTexture );
+
   cinder::gl::setMatricesWindow( getWindowSize() );
 
   cinder::gl::clear(cinder::Color::white());
   gui->drawAll();
 
+
   if (won_game_) {
     DrawEndScreen();
+    gui->drawAll();
   } else {
     cinder::gl::translate(-360,-250);
     DrawGrid();
+    DrawScore();
   }
 
+
+}
+
+void MyApp::DrawScore() {
+  cinder::gl::color(cinder::Color(0,0,1));
+  cinder::TextBox box;
+  box.setSize(cinder::ivec2(100,100));
+  box.setAlignment(cinder::TextBox::CENTER);
+  box.setFont(cinder::Font("Arial", 30));
+  box.setColor(cinder::Color(0,1,0));
+  box.setBackgroundColor(cinder::ColorA(0,0,0,0));
+  std::string sc = std::to_string(score);
+  box.setText(sc);
+
+  const auto box_size = box.getSize();
+  const cinder::vec2 locp = {935, -100};
+  const auto surface = box.render();
+  const auto texture = cinder::gl::Texture::create(surface);
+  cinder::gl::draw(texture, locp);
 }
 
 void MyApp::DrawEndScreen() {
@@ -90,40 +125,6 @@ void MyApp::PrintNum() {
 
 }
 
-void MyApp::DrawBoard() {
-  cinder::gl::translate( getWindowCenter().x, getWindowCenter().y);
-  cinder::gl::translate(-200,-100);
-
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-
-      cinder::gl::color( cinder::Color( 0, 1, 0 ) );
-      cinder::Area area(0,0,300,200);
-
-      if (tile_x_.size() < game_board_.board_size_) {
-        tile_x_.push_back(340 + j*300);
-      }
-
-      cinder::Rectf rect(area);
-      cinder::gl::drawStrokedRect(rect);
-
-      if (game_board_.grid_[j][i].num_ != game_board_.board_size_*game_board_.board_size_) {
-        std::string str = std::to_string(game_board_.grid_[j][i].num_);
-        cinder::gl::drawStringCentered (str, cinder::ivec2(150,100),
-                                        cinder::ColorA(1, 0, 0, 1),
-                                        cinder::Font("Arial", 30));
-      }
-
-      cinder::gl::translate(300,0);
-    }
-    if (tile_y_.size() < game_board_.board_size_) {
-      tile_y_.push_back(250 + i*200);
-    }
-    cinder::gl::translate(-900,200);
-  }
-
-}
-
 void MyApp::DrawGrid() {
   cinder::gl::translate( getWindowCenter().x, getWindowCenter().y);
   cinder::gl::translate(-200,-100);
@@ -148,11 +149,12 @@ void MyApp::DrawGrid() {
 
       cinder::Rectf rect(area);
       cinder::gl::drawStrokedRect(rect);
-
+      //cinder::Rectf rectangle(cinder::Area(0,0,300,200));
+      //cinder::gl::draw( mTexture, rectangle );
 
       if (game_board_.grid_[j][i].num_ != game_board_.board_size_*game_board_.board_size_) {
         std::string str = std::to_string(game_board_.grid_[j][i].num_);
-        cinder::gl::drawStringCentered (str, cinder::ivec2(150,100),
+        cinder::gl::drawStringCentered (str, cinder::ivec2(x/2,y/2),
                                         cinder::ColorA(1, 0, 0, 1),
                                         cinder::Font("Arial", 30));
       }
@@ -181,7 +183,6 @@ void MyApp::mouseDown(cinder::app::MouseEvent event) {
   std::cout << event.getX() << " " << event.getY() << std::endl;
   std::vector<std::vector<mylibrary::Tile>> pre_move = game_board_.grid_;
 
-
   for (int y = 0; y < tile_y_.size(); y++) {
     for (int x = 0; x < tile_x_.size(); x++) {
       if (event.getX() <= tile_x_[x] && event.getY() <= tile_y_[y]) {
@@ -192,11 +193,18 @@ void MyApp::mouseDown(cinder::app::MouseEvent event) {
             game_board_.MoveTile(x,y,mylibrary::Direction::kLeft);
             if (pre_move == game_board_.grid_) {
               game_board_.MoveTile(x,y,mylibrary::Direction::kRight);
+              if (pre_move != game_board_.grid_) {
+                score++;
+                return;
+              }
             }
+            score++;
             return;
           }
+          score++;
           return;
         }
+        score++;
         return;
       }
     }

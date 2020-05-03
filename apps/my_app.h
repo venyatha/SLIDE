@@ -26,14 +26,15 @@ class MyApp : public cinder::app::App {
   std::vector<int> tile_x_;
   std::vector<int> tile_y_;
   bool won_game_ = false;
+  int score = 0;
 
   mylibrary::GameBoard game_board_;
-  void DrawBoard();
   void PrintNum();
   void DrawEndScreen();
   void DrawGrid();
   void ShuffleButton();
   void UpdateButton();
+  void DrawScore();
 };
 
 

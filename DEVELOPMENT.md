@@ -16,6 +16,17 @@
     - [x] determine if player has won
     - [x] write better shuffle method
       
- - **4/26/20** Need to do:
+ - **4/26/20** Produce correctly shuffled games
     - [x] checks if the game is solvable
 
+
+ - **5/2/20** Need to do:
+    - [x] make game flexible to different grid sizes
+    - [x] add a score counter to UI
+    
+ - **5/3/20** Need to do:
+    - [ ] add default picture version
+    - [ ] make 'play again' button for end screen 
+    
+ - **5/4/20** Need to do:
+    - [ ] write README file   
