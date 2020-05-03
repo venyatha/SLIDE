@@ -10,7 +10,7 @@
     - [x] write GameBoard class and related functions
     - [x] write tests for GameBoard class
     
- - **4/26/20** Making the game responsive
+ - **4/26/20** Made the game responsive
     - [x] draw the shuffled board on ui
     - [x] make the game responsive to clicks
     - [x] determine if player has won
@@ -20,13 +20,14 @@
     - [x] checks if the game is solvable
 
 
- - **5/2/20** Need to do:
+ - **5/2/20** Made the game flexible to grid sizes between 3 and 7
     - [x] make game flexible to different grid sizes
     - [x] add a score counter to UI
     
  - **5/3/20** Need to do:
-    - [ ] add default picture version
-    - [ ] make 'play again' button for end screen 
+    - [x] add default picture version
+    - [ ] improve GameBoard testing
     
  - **5/4/20** Need to do:
     - [ ] write README file   
+    - [ ] improve UI

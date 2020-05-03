@@ -15,9 +15,10 @@ using cinder::app::KeyEvent;
 MyApp::MyApp() :game_board_(3){};
 
 void MyApp::setup() {
-  surface = cinder::Surface(cinder::loadImage("/Users/mannev1/Desktop/cinder_0.9.2_mac/"
-                                              "my-projects/final-project-vmanne3/assets/colourwheel.jpeg"));
-  texture_vec_ = MakeTexturesVec();
+
+  texture_vec_ = mylibrary::MakeTextureVec(
+      "/Users/mannev1/Desktop/cinder_0.9.2_mac/"
+      "my-projects/final-project-vmanne3/assets/colourwheel.jpeg");
 
   gui = pretzel::PretzelGui::create("Puzzle settings");
   gui->setSize(cinder::vec2(20,10));
@@ -28,33 +29,7 @@ void MyApp::setup() {
   gui->addButton("Update", &MyApp::UpdateButton, this);
   gui->addToggle("Picture mode", &picture_game_);
 
-  //gui->addSaveLoad();
-  //gui->loadSettings();    // load the last saved settings automatically
-
   game_board_.ShuffleBoard();
-
-  //ci::gl::enableAlphaBlending();
-}
-cinder::gl::Texture2dRef MyApp::MakeTexture(int x, int y) {
-  cinder::Surface s(267,200,false);
-  for (int i = 0; i < 267; i++) {
-    for (int j = 0; j < 200; j++) {
-      s.setPixel(cinder::ivec2(i,j),surface.getPixel(cinder::ivec2(i+x,j+y)));
-    }
-  }
-  cinder::gl::TextureRef texture = cinder::gl::Texture2d::create(s);
-  return texture;
-}
-
-std::vector<cinder::gl::Texture2dRef> MyApp::MakeTexturesVec() {
-  std::vector<cinder::gl::Texture2dRef> toReturn;
-
-  for (int y = 0; y < 600; y = y+200) {
-    for (int x = 0; x < 801; x = x+267) {
-      toReturn.push_back(MakeTexture(x,y));
-    }
-  }
-  return toReturn;
 }
 
 void MyApp::ShuffleButton() {
@@ -67,6 +42,7 @@ void MyApp::UpdateButton() {
   tile_x_.clear();
   tile_y_.clear();
   score = 0;
+  won_game_ = false;
   picture_game_ = false;
 }
 

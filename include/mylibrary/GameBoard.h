@@ -14,6 +14,9 @@ namespace mylibrary {
 //enum class Direction { kUp, kDown, kLeft, kRight };
 
 class GameBoard {
+ private:
+
+
  public:
   int board_size_;
   std::vector<std::vector<Tile>> grid_;

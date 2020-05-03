@@ -21,8 +21,6 @@ class MyApp : public cinder::app::App {
 
   pretzel::PretzelGuiRef gui;
   int grid_size_ = 4;
-  //cinder::gl::TextureRef mTexture;
-  cinder::Surface surface;
   std::vector<int> tile_x_;
   std::vector<int> tile_y_;
   bool won_game_ = false;
@@ -37,8 +35,6 @@ class MyApp : public cinder::app::App {
   void UpdateButton();
   void DrawScore();
 
-  cinder::gl::Texture2dRef MakeTexture(int x, int y);
-  std::vector<cinder::gl::Texture2dRef> MakeTexturesVec();
 };
 
 

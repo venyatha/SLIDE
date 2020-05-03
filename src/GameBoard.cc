@@ -142,12 +142,8 @@ void GameBoard::ShuffleGameBoard() {
   std::random_device rd;
   std::mt19937 mt(rd());
   std::uniform_real_distribution<double> dist(1.0, 1000.0);
-  //for (int i=0; i<16; ++i) {
-  //  std::cout << ceil(dist(mt)) << "\n";
-  //}
 
   int r = ceil(dist(mt));
-  //int r = rand()%1000;
 
   for (int i = 0; i < r; i++) {
     ShuffleBoard();

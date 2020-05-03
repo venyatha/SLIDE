@@ -12,10 +12,7 @@
 
 namespace mylibrary {
 
-  //cinder::Surface surface;
-  //std::vector<cinder::gl::Texture2dRef> MakeTexturesVec(std::string filepath);
-  void GridAreas(std::string filepath);
-
+  std::vector<cinder::gl::Texture2dRef> MakeTextureVec(std::string filpath);
 
 }  // namespace mylibrary
 
