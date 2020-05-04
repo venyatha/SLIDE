@@ -12,7 +12,7 @@ namespace myapp {
 
 using cinder::app::KeyEvent;
 
-MyApp::MyApp() :game_board_(3){};
+MyApp::MyApp() :game_board_{6} {};
 
 void MyApp::setup() {
 
@@ -24,7 +24,7 @@ void MyApp::setup() {
   gui->setSize(cinder::vec2(20,10));
   gui->setPos(cinder::vec2(920,50));
 
-  gui->addSlider("Grid Size", &grid_size_, 3, 7);
+  gui->addSlider("Grid Size", &grid_size_, 3, 6);
   gui->addButton("Shuffle", &MyApp::ShuffleButton, this);
   gui->addButton("Update", &MyApp::UpdateButton, this);
   gui->addToggle("Picture mode", &picture_game_);
@@ -33,6 +33,9 @@ void MyApp::setup() {
 }
 
 void MyApp::ShuffleButton() {
+  if (won_game_) {
+    won_game_ = false;
+  }
   game_board_.ShuffleBoard();
 }
 
@@ -116,13 +119,13 @@ void MyApp::DrawGrid() {
   cinder::gl::translate( getWindowCenter().x, getWindowCenter().y);
   cinder::gl::translate(-200,-100);
 
-  float x = 800 / game_board_.board_size_;
-  float y = 600 / game_board_.board_size_;
+  float x = 800 / game_board_.size_;
+  float y = 600 / game_board_.size_;
 
-  for (int i = 0; i < game_board_.board_size_; i++) {
-    for (int j = 0; j < game_board_.board_size_; j++) {
+  for (int i = 0; i < game_board_.size_; i++) {
+    for (int j = 0; j < game_board_.size_; j++) {
 
-      if (tile_x_.size() < game_board_.board_size_) {
+      if (tile_x_.size() < game_board_.size_) {
         tile_x_.push_back(240 + j*x);
       }
 
@@ -131,7 +134,7 @@ void MyApp::DrawGrid() {
         cinder::gl::drawStrokedRect(cinder::Rectf(cinder::Area(0,0,x,y)));
       }
 
-      if (game_board_.grid_[j][i].num_ != game_board_.board_size_*game_board_.board_size_) {
+      if (game_board_.grid_[j][i].num_ != game_board_.size_ *game_board_.size_) {
         if (picture_game_) {
           cinder::Rectf rectangle(cinder::Area(0,0,x,y));
           cinder::gl::draw( texture_vec_[game_board_.grid_[j][i].num_ - 1], rectangle );
@@ -145,10 +148,10 @@ void MyApp::DrawGrid() {
       cinder::gl::translate(x,0);
     }
 
-    if (tile_y_.size() < game_board_.board_size_) {
+    if (tile_y_.size() < game_board_.size_) {
       tile_y_.push_back(x + i*y);
     }
-    cinder::gl::translate(-(x*game_board_.board_size_),y);
+    cinder::gl::translate(-(x*game_board_.size_),y);
   }
 
 }

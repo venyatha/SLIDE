@@ -24,10 +24,15 @@
     - [x] make game flexible to different grid sizes
     - [x] add a score counter to UI
     
- - **5/3/20** Need to do:
-    - [x] add default picture version
-    - [ ] improve GameBoard testing
+ - **5/3/20** Added default picture mode
+    - [x] crop an image
+    - [x] add picture mode
     
- - **5/4/20** Need to do:
+ - **5/4/20** Main testing completed
+    - [x] thorough GameBoard testing
+    - [ ] Image testing
+    - [ ] use command line for image filepath
+    
+ - **5/5/20** Need to do:
     - [ ] write README file   
     - [ ] improve UI

@@ -2,108 +2,220 @@
 
 #define CATCH_CONFIG_MAIN
 
-#include <cinder/Rand.h>
 #include <mylibrary/GameBoard.h>
 
 #include <catch2/catch.hpp>
 
-TEST_CASE("Random sanity test", "[random]") {
-  const float random = cinder::randFloat();
-  REQUIRE(0. <= random);
-  REQUIRE(random <= 1.);
-}
-
-TEST_CASE("Tile equality") {
+// Tile
+TEST_CASE("Tile Equality") {
   mylibrary::Tile one(0,0,1);
   mylibrary::Tile two(0,0,1);
 
-  REQUIRE(one == two);
+  SECTION("simple tile equality") {
+    REQUIRE(one == two);
+  }
+
+  SECTION("same number, one is null tile") {
+    mylibrary::Tile another_one(0,0,1, true);
+    REQUIRE(!(another_one == two));
+  }
 }
-TEST_CASE("Tile Vector equality") {
+
+TEST_CASE("Tile Vector Equality") {
+  std::vector<mylibrary::Tile> vec;
   mylibrary::Tile one(0,0,1);
   mylibrary::Tile two(0,0,2);
-
-  std::vector<mylibrary::Tile> vec;
   vec.push_back(one);
   vec.push_back(two);
 
+  std::vector<mylibrary::Tile> other_vec;
   mylibrary::Tile three(0,0,1);
   mylibrary::Tile four(0,0,2);
-
-  std::vector<mylibrary::Tile> other_vec;
   other_vec.push_back(three);
   other_vec.push_back(four);
 
-  REQUIRE(vec == other_vec);
+  SECTION("equal tile vectors") {
+    REQUIRE(vec == other_vec);
+  }
+
+  SECTION("different size vectors") {
+    vec.push_back(mylibrary::Tile(1,1,1));
+    REQUIRE(vec != other_vec);
+  }
+
+  SECTION("different num values") {
+    vec.push_back(mylibrary::Tile(1,1,1));
+    vec.push_back(mylibrary::Tile(1,1,2));
+    REQUIRE(vec != other_vec);
+  }
+
+  SECTION("different null tile values") {
+    vec[0].null_tile_ = true;
+    REQUIRE(vec != other_vec);
+  }
 }
 
-TEST_CASE("constructor") {
+// GameBoard
+TEST_CASE("GameBoard Constructor") {
+  SECTION("size 3") {
+    mylibrary::GameBoard g(3);
+    REQUIRE(g.grid_[1][0] == mylibrary::Tile(0,0,2));
+    REQUIRE(g.grid_[2][2].null_tile_);
+    REQUIRE(g.size_ == 3);
+  }
+
+  SECTION("size 6") {
+    mylibrary::GameBoard g(6);
+    REQUIRE(g.grid_[0][5] == mylibrary::Tile(0,0,31));
+    REQUIRE(g.grid_[5][5].null_tile_);
+    REQUIRE(g.size_ == 6);
+  }
+}
+
+TEST_CASE("Outstream Operator") {
   mylibrary::GameBoard g(3);
-  mylibrary::Tile two(0,0,2);
-  REQUIRE(g.grid_[1][0] == two);
-  REQUIRE(g.grid_[2][2].null_tile_);
+
+  SECTION("just initialized") {
+    std::ostringstream os;
+    os << g;
+    REQUIRE(os.str() == "123\n"
+                        "456\n"
+                        "78 \n");
+  }
+
+  SECTION("moved one tile") {
+    g.MoveTile(2,1,mylibrary::Direction::kDown);
+    std::ostringstream os;
+    os << g;
+    REQUIRE(os.str() == "123\n"
+                        "45 \n"
+                        "786\n");
+
+  }
 }
 
 TEST_CASE("Move Tile") {
-  SECTION("move down") {
-    mylibrary::GameBoard g(3);
-    g.MoveTile(2,1,mylibrary::Direction::kDown);
-    mylibrary::Tile tile(2,2,6);
-    REQUIRE(g.grid_[2][2] == tile);
-    REQUIRE(g.grid_[2][2].x == tile.x);
-    REQUIRE(g.grid_[2][1].y == tile.y);
+  mylibrary::GameBoard g(3);
+  g.MoveTile(2,1,mylibrary::Direction::kDown);
+
+  SECTION("successful move down") {
+
+    std::ostringstream os;
+    os << g;
+    REQUIRE(os.str() == "123\n"
+                        "45 \n"
+                        "786\n");
+    REQUIRE(g.grid_[2][1].null_tile_);
+    // check that inherent x and y values stay the same
+    REQUIRE(g.grid_[2][2].x == 2);
+    REQUIRE(g.grid_[2][1].y == 2);
+  }
+
+  g.MoveTile(2,2,mylibrary::Direction::kUp);
+  SECTION("successful move up") {
+    std::ostringstream os;
+    os << g;
+    REQUIRE(os.str() == "123\n"
+                        "456\n"
+                        "78 \n");
+  }
+
+  g.MoveTile(1,2,mylibrary::Direction::kRight);
+  SECTION("successful move right") {
+    std::ostringstream os;
+    os << g;
+    REQUIRE(os.str() == "123\n"
+                        "456\n"
+                        "7 8\n");
+  }
+
+  g.MoveTile(2,2,mylibrary::Direction::kRight);
+  SECTION("successful move left") {
+    std::ostringstream os;
+    os << g;
+    REQUIRE(os.str() == "123\n"
+                        "456\n"
+                        "78 \n");
+  }
+
+  SECTION("failed move") {
+    g.MoveTile(0,0,mylibrary::Direction::kDown);
+    std::ostringstream os;
+    os << g;
+    REQUIRE(os.str() == "123\n"
+                        "456\n"
+                        "78 \n");
   }
 }
 
-TEST_CASE("outstream operator") {
-  mylibrary::GameBoard g(3);
-  std::ostringstream os;
-  os << g;
-  REQUIRE(os.str() == "123\n456\n789\n");
-}
 
-TEST_CASE("check win") {
-  SECTION("just init") {
-    mylibrary::GameBoard g(3);
+TEST_CASE("Check Win") {
+  mylibrary::GameBoard g(3);
+
+  SECTION("just initialized") {
     REQUIRE(g.CheckWin());
   }
   SECTION("move one") {
-    mylibrary::GameBoard g(3);
     g.MoveTile(2,1,mylibrary::Direction::kDown);
     REQUIRE(!g.CheckWin());
   }
 }
 
-TEST_CASE("shuffle") {
+TEST_CASE("is solvable") {
   mylibrary::GameBoard g(3);
-  g.Shuffle();
-  std::ostringstream os;
-  os << g;
-  REQUIRE(os.str() != "123\n456\n789\n");
+
+  SECTION("just initialized") {
+    REQUIRE(g.isSolvable());
+  }
+
+  SECTION("move two") {
+    g.MoveTile(1,2,mylibrary::Direction::kRight);
+    g.MoveTile(1,1,mylibrary::Direction::kDown);
+    REQUIRE(g.isSolvable());
+  }
+
+  mylibrary::GameBoard gb(4);
+  SECTION("even sized board") {
+    gb.MoveTile(2,3,mylibrary::Direction::kRight);
+    gb.MoveTile(2,2,mylibrary::Direction::kDown);
+    REQUIRE(gb.isSolvable());
+  }
 }
 
 TEST_CASE("shuffle board") {
   mylibrary::GameBoard g(3);
-  g.ShuffleGameBoard();
+  g.ShuffleBoard();
   std::ostringstream os;
   os << g;
 
-  mylibrary::GameBoard b(3);
-  b.ShuffleGameBoard();
-  std::ostringstream os2;
-  os2 << b;
+  SECTION("size 3") {
+    REQUIRE(os.str() != "123\n456\n789\n");
+    REQUIRE(g.isSolvable());
+  }
 
-  REQUIRE(os.str() != os2.str());
-  REQUIRE(g.isSolvable());
-  REQUIRE(b.isSolvable());
+  SECTION("shuffle twice") {
+    g.ShuffleBoard();
+    std::ostringstream os2;
+    os2 << g;
+    REQUIRE(os.str() != os2.str());
+    REQUIRE(g.isSolvable());
+  }
+
+  SECTION("two different boards") {
+    mylibrary::GameBoard b(3);
+    b.ShuffleBoard();
+    std::ostringstream os2;
+    os2 << b;
+    REQUIRE(os.str() != os2.str());
+    REQUIRE(b.isSolvable());
+  }
+
+  SECTION("size 4") {
+    mylibrary::GameBoard b(4);
+    b.ShuffleBoard();
+    std::ostringstream os2;
+    os2 << b;
+    REQUIRE(os2.str() != "1234\n5678\n9101112\n131415 ");
+    REQUIRE(b.isSolvable());
+  }
 }
-
-
-
-/*
-TEST_CASE("is solvable") {
-  mylibrary::GameBoard g(3);
-  g.ShuffleGameBoard();
-  REQUIRE(g.isSolvable());
-}
- */

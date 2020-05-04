@@ -11,32 +11,26 @@
 
 namespace mylibrary {
 
-//enum class Direction { kUp, kDown, kLeft, kRight };
-
 class GameBoard {
  private:
-
+  bool IsNullTile(int x, int y);
+  int countInversions(int i, int j);
+  int RowOfNullTile();
+  int sumInversions();
+  std::vector<std::vector<Tile>> solution_;
 
  public:
-  int board_size_;
+  int size_;
   std::vector<std::vector<Tile>> grid_;
-  std::vector<std::vector<Tile>> solution_;
 
   explicit GameBoard(int size);
   void MoveTile(int x, int y, Direction dir);
-  bool IsNullTile(int x, int y);
   friend std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard);
-  void Shuffle();
   bool CheckWin();
-  void SwapTiles(int i, int j, int k, int l);
-  void ShuffleGameBoard();
   void ShuffleBoard();
-  int countInversions(int i, int j);
-  int sumInversions();
   bool isSolvable();
   void Reset(int num);
 };
-
 
 }  // namespace mylibrary
 

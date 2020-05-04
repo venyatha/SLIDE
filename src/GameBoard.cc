@@ -9,15 +9,15 @@
 namespace mylibrary {
 
 GameBoard::GameBoard(int size) {
-  board_size_ = size;
+  size_ = size;
 
-  std::vector<Tile> temp_vec(board_size_,Tile(0,0,0));
-  std::vector<std::vector<Tile>> vec(board_size_,temp_vec);
+  std::vector<Tile> temp_vec(size_,Tile(0,0,0));
+  std::vector<std::vector<Tile>> vec(size_,temp_vec);
 
   int count = 1;
-  for (int y = 0; y < board_size_; y++) {
-    for (int x = 0; x < board_size_; x++) {
-      if (count == board_size_ * board_size_) {
+  for (int y = 0; y < size_; y++) {
+    for (int x = 0; x < size_; x++) {
+      if (count == size_ * size_) {
         vec[x][y] = Tile(x,y,count, true);
       } else {
         vec[x][y] = Tile(x,y,count);
@@ -32,15 +32,15 @@ GameBoard::GameBoard(int size) {
 }
 
 void GameBoard::Reset(int num) {
-  board_size_ = num;
+  size_ = num;
 
-  std::vector<Tile> temp_vec(board_size_,Tile(0,0,0));
-  std::vector<std::vector<Tile>> vec(board_size_,temp_vec);
+  std::vector<Tile> temp_vec(size_,Tile(0,0,0));
+  std::vector<std::vector<Tile>> vec(size_,temp_vec);
 
   int count = 1;
-  for (int y = 0; y < board_size_; y++) {
-    for (int x = 0; x < board_size_; x++) {
-      if (count == board_size_ * board_size_) {
+  for (int y = 0; y < size_; y++) {
+    for (int x = 0; x < size_; x++) {
+      if (count == size_ * size_) {
         vec[x][y] = Tile(x,y,count, true);
       } else {
         vec[x][y] = Tile(x,y,count);
@@ -63,12 +63,12 @@ void GameBoard::MoveTile(int x, int y, Direction dir) {
     grid_[x][y - 1] = grid_[x][y];
     grid_[x][y] = temp;
 
-  } else if (dir == Direction::kDown && y != board_size_ - 1 && IsNullTile(x,y+1)) {
+  } else if (dir == Direction::kDown && y != size_ - 1 && IsNullTile(x,y+1)) {
     Tile temp = grid_[x][y + 1];
     grid_[x][y + 1] = grid_[x][y];
     grid_[x][y] = temp;
 
-  } else if (dir == Direction::kRight && x != board_size_ - 1 && IsNullTile(x+1,y)) {
+  } else if (dir == Direction::kRight && x != size_ - 1 && IsNullTile(x+1,y)) {
     Tile temp = grid_[x+1][y];
     grid_[x+1][y] = grid_[x][y];
     grid_[x][y] = temp;
@@ -82,9 +82,13 @@ void GameBoard::MoveTile(int x, int y, Direction dir) {
 }
 
 std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard) {
-  for (int i = 0; i < gameBoard.board_size_; i++) {
-    for (int j = 0; j < gameBoard.board_size_; j++) {
-      os << gameBoard.grid_[j][i].num_;
+  for (int i = 0; i < gameBoard.size_; i++) {
+    for (int j = 0; j < gameBoard.size_; j++) {
+      if (gameBoard.grid_[j][i].num_ == gameBoard.size_*gameBoard.size_) {
+        os << " ";
+      } else {
+        os << gameBoard.grid_[j][i].num_;
+      }
     }
     os << "\n";
   }
@@ -92,21 +96,6 @@ std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard) {
 }
 bool GameBoard::CheckWin() { return grid_ == solution_; }
 
-void GameBoard::SwapTiles(int i, int j, int k, int l) {
-  Tile temp = grid_[i][j];
-  grid_[i][j] = grid_[k][l];
-  grid_[k][l] = temp;
-}
-
-void GameBoard::Shuffle() {
-  for (int i = 0; i < board_size_; ++i) {
-    for (int j = 0; j < board_size_; ++j) {
-      int k = floor(rand()%board_size_);
-      int l = floor(rand()%board_size_);
-      SwapTiles(i, j, k, l);
-    }
-  }
-}
 
 void GameBoard::ShuffleBoard() {
   std::random_device rd;
@@ -129,8 +118,8 @@ void GameBoard::ShuffleBoard() {
       dir = Direction::kUp;
     }
 
-    int x = (rand()%board_size_);
-    int y = (rand()%board_size_);
+    int x = (rand()% size_);
+    int y = (rand()% size_);
 
     MoveTile(x, y, dir);
   }
@@ -138,31 +127,17 @@ void GameBoard::ShuffleBoard() {
 
 }
 
-void GameBoard::ShuffleGameBoard() {
-  std::random_device rd;
-  std::mt19937 mt(rd());
-  std::uniform_real_distribution<double> dist(1.0, 1000.0);
-
-  int r = ceil(dist(mt));
-
-  for (int i = 0; i < r; i++) {
-    ShuffleBoard();
-  }
-
-  std::cout << isSolvable() << std::endl;
-
-}
-
+//https://www.sitepoint.com/randomizing-sliding-puzzle-tiles/
 int GameBoard::countInversions(int i, int j) {
   int inversions = 0;
-  int tileNum = j * board_size_ + i;
-  int lastTile = board_size_ * board_size_;
-  int tileValue = grid_[i][j].y * board_size_ + grid_[i][j].x;
+  int tileNum = j * size_ + i;
+  int lastTile = size_ * size_;
+  int tileValue = grid_[i][j].y * size_ + grid_[i][j].x;
   for (int q = tileNum + 1; q < lastTile; ++q) {
-    int k = q % board_size_;
-    int l = floor(q / board_size_);
+    int k = q % size_;
+    int l = floor(q / size_);
 
-    int compValue = grid_[k][l].y * board_size_ + grid_[k][l].x;
+    int compValue = grid_[k][l].y * size_ + grid_[k][l].x;
     if (tileValue > compValue && tileValue != (lastTile - 1)) {
       ++inversions;
     }
@@ -173,16 +148,31 @@ int GameBoard::countInversions(int i, int j) {
 
 int GameBoard::sumInversions() {
   int inversions = 0;
-  for (int j = 0; j < board_size_; ++j) {
-    for (int i = 0; i < board_size_; ++i) {
+  for (int j = 0; j < size_; ++j) {
+    for (int i = 0; i < size_; ++i) {
       inversions += countInversions(i, j);
     }
   }
   return inversions;
 }
 
+int GameBoard::RowOfNullTile() {
+  for (int i = 0; i < size_; i++) {
+    for (int j = 0; j < size_; j++) {
+      if (grid_[i][j].null_tile_) {
+        return j + 1;
+      }
+    }
+  }
+  return 1;
+}
+
 bool GameBoard::isSolvable() {
-  return (sumInversions() % 2 == 0);
+  if (size_ % 2 == 1) {
+    return (sumInversions() % 2 == 0);
+  } else {
+    return ((sumInversions() + size_ - RowOfNullTile()) % 2 == 0);
+  }
 }
 
 

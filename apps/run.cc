@@ -4,6 +4,7 @@
 #include <cinder/app/RendererGl.h>
 
 #include "my_app.h"
+#include <vector>
 
 
 using cinder::app::App;
