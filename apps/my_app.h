@@ -29,12 +29,11 @@ class MyApp : public cinder::app::App {
   std::vector<cinder::gl::Texture2dRef> texture_vec_;
 
   mylibrary::GameBoard game_board_;
-  void PrintNum();
   void DrawGrid();
   void ShuffleButton();
   void UpdateButton();
-  void DrawScore();
 
+  static void PrintText(const std::string& text, cinder::Color colour, glm::ivec2 loc, cinder::ivec2 size);
 };
 
 
