@@ -12,7 +12,8 @@
 
 namespace mylibrary {
 
-  std::vector<cinder::gl::Texture2dRef> MakeTextureVec(std::string filpath);
+  std::string CheckValidFile(std::string file_path);
+  std::vector<cinder::gl::Texture2dRef> MakeTextureVec(std::string filepath);
 
 }  // namespace mylibrary
 

@@ -7,18 +7,16 @@
 #include <mylibrary/GameBoard.h>
 #include <mylibrary/Image.h>
 #include <pretzel/PretzelGui.h>
+#include "path.h"
 
 namespace myapp {
 
 using cinder::app::KeyEvent;
 
-MyApp::MyApp() :game_board_{3} {};
+MyApp::MyApp() :game_board_{3}{};
 
 void MyApp::setup() {
-
-  texture_vec_ = mylibrary::MakeTextureVec(
-      "/Users/mannev1/Desktop/cinder_0.9.2_mac/"
-      "my-projects/final-project-vmanne3/assets/colourwheel.jpeg");
+  texture_vec_ = mylibrary::MakeTextureVec(myapp::file_path_);
 
   gui = pretzel::PretzelGui::create("Puzzle settings");
   gui->setSize(cinder::vec2(20,10));

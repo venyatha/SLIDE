@@ -21,9 +21,24 @@ cinder::gl::Texture2dRef MakeText(cinder::Surface& surface, int x, int y) {
   return texture;
 }
 
-std::vector<cinder::gl::Texture2dRef> MakeTextureVec(std::string filepath) {
-  cinder::Surface surface(cinder::loadImage(filepath));
+std::string CheckValidFile(std::string file_path) {
+  if (std::ifstream(file_path).fail()) {
+    return "please input a valid filepath";
+  } else if (cinder::loadImage(file_path)->getWidth() < 267) {
+    return "please pick an image that has a width greater than 267 pixels";
+  } else if (cinder::loadImage(file_path)->getWidth() < 200) {
+    return "please pick an image that has a height greater than 200 pixels";
+  } else {
+    return " ";
+  }
+}
 
+std::vector<cinder::gl::Texture2dRef> MakeTextureVec(std::string filepath) {
+  if (CheckValidFile(filepath) != " ") {
+    std::cerr << CheckValidFile(filepath);
+  }
+
+  cinder::Surface surface(cinder::loadImage(filepath));
   std::vector<cinder::gl::Texture2dRef> toReturn;
 
   for (int y = 0; y < 600; y = y+200) {

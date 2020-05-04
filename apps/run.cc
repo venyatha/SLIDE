@@ -5,6 +5,7 @@
 
 #include "my_app.h"
 #include <vector>
+#include "path.h"
 
 
 using cinder::app::App;
@@ -18,6 +19,9 @@ const int kWidth = 1200;
 const int kHeight = 800;
 
 void SetUp(App::Settings* settings) {
+  std::vector<std::string> args = settings->getCommandLineArgs();
+  myapp::file_path_ =  args[1];
+
   settings->setWindowSize(kWidth, kHeight);
   settings->setTitle("My CS 126 Application");
 }
