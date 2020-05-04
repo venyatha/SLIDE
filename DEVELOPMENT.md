@@ -28,11 +28,11 @@
     - [x] crop an image
     - [x] add picture mode
     
- - **5/4/20** Main testing completed
+ - **5/4/20** Main testing completed and UI improved
     - [x] thorough GameBoard testing
-    - [ ] Image testing
-    - [ ] use command line for image filepath
+    - [x] use command line for image filepath
+    - [x] improve UI
+    - [ ] image testing
     
  - **5/5/20** Need to do:
     - [ ] write README file   
-    - [ ] improve UI
