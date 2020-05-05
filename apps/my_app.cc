@@ -29,13 +29,13 @@ void MyApp::setup() {
 
   // shuffle game_board_ and save original state
   game_board_.ShuffleBoard();
-  original_grid_ = game_board_.grid_;
+  original_grid_ = game_board_.GetGrid();
 }
 
 void MyApp::Reset() {
   game_board_.Reset(grid_size_);
   game_board_.ShuffleBoard();
-  original_grid_ = game_board_.grid_;
+  original_grid_ = game_board_.GetGrid();
   tile_x_.clear();
   tile_y_.clear();
   moves_ = 0;
@@ -45,7 +45,7 @@ void MyApp::Reset() {
 
 void MyApp::ResetButton() {
   // reset the grid to the original configuration
-  game_board_.grid_ = original_grid_;
+  game_board_.SetGrid(original_grid_);
   moves_ = 0;
 }
 
@@ -104,13 +104,13 @@ void MyApp::DrawGrid() {
   ci::gl::translate(-200,-100);
 
   // calculate width and height of the tiles
-  float width = 800 / game_board_.size_;
-  float height = 600 / game_board_.size_;
+  float width = 800 / game_board_.GetSize();
+  float height = 600 / game_board_.GetSize();
 
-  for (int y = 0; y < game_board_.size_; y++) {
-    for (int x = 0; x < game_board_.size_; x++) {
+  for (int y = 0; y < game_board_.GetSize(); y++) {
+    for (int x = 0; x < game_board_.GetSize(); x++) {
       // populate tile_x_ with the x-coordinates of the tiles
-      if (tile_x_.size() < game_board_.size_) {
+      if (tile_x_.size() < game_board_.GetSize()) {
         tile_x_.push_back(40+ (x+1)* width);
       }
 
@@ -122,16 +122,16 @@ void MyApp::DrawGrid() {
       }
 
       // if not the null tile
-      if (!game_board_.grid_[x][y].GetNullTile()) {
+      if (!game_board_.GetGrid()[x][y].GetNullTile()) {
         if (picture_game_) {
           // draw the cropped image corresponding to the tile
           ci::Rectf rect(ci::Area(0,0, width, height));
-          int index = game_board_.grid_[x][y].GetNum() - 1;
+          int index = game_board_.GetGrid()[x][y].GetNum() - 1;
           ci::gl::draw( texture_vec_[index],rect);
         }
 
         // draw the number of the tile
-        std::string str = std::to_string(game_board_.grid_[x][y].GetNum());
+        std::string str = std::to_string(game_board_.GetGrid()[x][y].GetNum());
         ci::gl::drawStringCentered (str,ci::ivec2(width /2,
             height /2),ci::ColorA(0, 0.5, 1, 1),
             ci::Font("Arial", 30));
@@ -142,12 +142,12 @@ void MyApp::DrawGrid() {
     }
 
     // populate tile_y_ with the y-coordinates of the tiles
-    if (tile_y_.size() < game_board_.size_) {
+    if (tile_y_.size() < game_board_.GetSize()) {
       tile_y_.push_back(50 + (y+1)* height);
     }
 
     // translate left and down to draw the next row of tiles
-    ci::gl::translate(-(width*game_board_.size_), height);
+    ci::gl::translate(-(width*game_board_.GetSize()), height);
   }
 
 }
@@ -159,7 +159,7 @@ void MyApp::keyDown(ci::app::KeyEvent event) {
 }
 void MyApp::mouseDown(ci::app::MouseEvent event) {
   // holds the current state of the grid
-  std::vector<std::vector<mylibrary::Tile>> pre_move = game_board_.grid_;
+  std::vector<std::vector<mylibrary::Tile>> pre_move = game_board_.GetGrid();
 
   // iterate through the tile_y_ and tile_x_ vectors to find the position of
   // the mouse click in relation to the bounds of the tiles
@@ -169,13 +169,13 @@ void MyApp::mouseDown(ci::app::MouseEvent event) {
         // try to move the tile, if the state of the grid doesn't change, try
         // another move
         game_board_.MoveTile(x,y,mylibrary::Direction::kDown);
-        if (pre_move == game_board_.grid_) {
+        if (pre_move == game_board_.GetGrid()) {
           game_board_.MoveTile(x,y,mylibrary::Direction::kUp);
-          if (pre_move == game_board_.grid_) {
+          if (pre_move == game_board_.GetGrid()) {
             game_board_.MoveTile(x,y,mylibrary::Direction::kLeft);
-            if (pre_move == game_board_.grid_) {
+            if (pre_move == game_board_.GetGrid()) {
               game_board_.MoveTile(x,y,mylibrary::Direction::kRight);
-              if (pre_move == game_board_.grid_) {
+              if (pre_move == game_board_.GetGrid()) {
                 // no legal move has occurred, return without incrementing moves
                 return;
               }

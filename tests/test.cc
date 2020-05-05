@@ -64,16 +64,16 @@ TEST_CASE("Tile Vector Equality") {
 TEST_CASE("GameBoard Constructor") {
   SECTION("size 3") {
     mylibrary::GameBoard g(3);
-    REQUIRE(g.grid_[1][0] == mylibrary::Tile(0,0,2));
-    REQUIRE(g.grid_[2][2].GetNullTile());
-    REQUIRE(g.size_ == 3);
+    REQUIRE(g.GetGrid()[1][0] == mylibrary::Tile(0,0,2));
+    REQUIRE(g.GetGrid()[2][2].GetNullTile());
+    REQUIRE(g.GetSize() == 3);
   }
 
   SECTION("size 6") {
     mylibrary::GameBoard g(6);
-    REQUIRE(g.grid_[0][5] == mylibrary::Tile(0,0,31));
-    REQUIRE(g.grid_[5][5].GetNullTile());
-    REQUIRE(g.size_ == 6);
+    REQUIRE(g.GetGrid()[0][5] == mylibrary::Tile(0,0,31));
+    REQUIRE(g.GetGrid()[5][5].GetNullTile());
+    REQUIRE(g.GetSize() == 6);
   }
 }
 
@@ -110,10 +110,10 @@ TEST_CASE("Move Tile") {
     REQUIRE(os.str() == "123\n"
                         "45 \n"
                         "786\n");
-    REQUIRE(g.grid_[2][1].GetNullTile());
+    REQUIRE(g.GetGrid()[2][1].GetNullTile());
     // check that inherent x and y values stay the same
-    REQUIRE(g.grid_[2][2].GetX() == 2);
-    REQUIRE(g.grid_[2][1].GetY() == 2);
+    REQUIRE(g.GetGrid()[2][2].GetX() == 2);
+    REQUIRE(g.GetGrid()[2][1].GetY() == 2);
   }
 
   g.MoveTile(2,2,mylibrary::Direction::kUp);
@@ -170,20 +170,20 @@ TEST_CASE("is solvable") {
   mylibrary::GameBoard g(3);
 
   SECTION("just initialized") {
-    REQUIRE(g.isSolvable());
+    REQUIRE(g.IsSolvable());
   }
 
   SECTION("move two") {
     g.MoveTile(1,2,mylibrary::Direction::kRight);
     g.MoveTile(1,1,mylibrary::Direction::kDown);
-    REQUIRE(g.isSolvable());
+    REQUIRE(g.IsSolvable());
   }
 
   mylibrary::GameBoard gb(4);
   SECTION("even sized board") {
     gb.MoveTile(2,3,mylibrary::Direction::kRight);
     gb.MoveTile(2,2,mylibrary::Direction::kDown);
-    REQUIRE(gb.isSolvable());
+    REQUIRE(gb.IsSolvable());
   }
 }
 
@@ -195,7 +195,7 @@ TEST_CASE("shuffle board") {
 
   SECTION("size 3") {
     REQUIRE(os.str() != "123\n456\n789\n");
-    REQUIRE(g.isSolvable());
+    REQUIRE(g.IsSolvable());
   }
 
   SECTION("shuffle twice") {
@@ -203,7 +203,7 @@ TEST_CASE("shuffle board") {
     std::ostringstream os2;
     os2 << g;
     REQUIRE(os.str() != os2.str());
-    REQUIRE(g.isSolvable());
+    REQUIRE(g.IsSolvable());
   }
 
   SECTION("two different boards") {
@@ -212,7 +212,7 @@ TEST_CASE("shuffle board") {
     std::ostringstream os2;
     os2 << b;
     REQUIRE(os.str() != os2.str());
-    REQUIRE(b.isSolvable());
+    REQUIRE(b.IsSolvable());
   }
 
   SECTION("size 4") {
@@ -221,7 +221,7 @@ TEST_CASE("shuffle board") {
     std::ostringstream os2;
     os2 << b;
     REQUIRE(os2.str() != "1234\n5678\n9101112\n131415 ");
-    REQUIRE(b.isSolvable());
+    REQUIRE(b.IsSolvable());
   }
 }
 

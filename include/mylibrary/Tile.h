@@ -10,9 +10,13 @@ namespace mylibrary {
 // Represents a tile on the GameBoard
 class Tile {
  private:
+  // the number of the tile if arranged in a grid
   int num_;
+  // whether the tile is a null tile
   bool null_tile_;
+  // x-coordinate where top left coordinate is (0,0)
   int x;
+  // y-coordinate where top left coordinate is (0,0)
   int y;
 
  public:

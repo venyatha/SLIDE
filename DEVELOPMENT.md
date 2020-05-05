@@ -40,6 +40,6 @@
     
  - **5/5/20** Finishing touches to UI and write documentation
     - [x] make reset button
-    - [ ] commenting and c++ style check
-    - [ ] write README file
+    - [x] commenting and c++ style check
+    - [x] write README file
     - [ ] update proposal.md 
