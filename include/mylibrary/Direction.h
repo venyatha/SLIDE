@@ -7,6 +7,7 @@
 
 namespace mylibrary {
 
+// Represents possible directions a tile can move
 enum class Direction { kUp, kDown, kLeft, kRight };
 
 }  // namespace mylibrary

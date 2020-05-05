@@ -6,18 +6,25 @@
 #define FINALPROJECT_TILE_H
 
 namespace mylibrary {
-class Tile {
- public:
 
+// Represents a tile on the GameBoard
+class Tile {
+ private:
   int num_;
   bool null_tile_;
   int x;
   int y;
 
+ public:
   Tile(int x, int y, int num, bool b);
-  explicit Tile(int x, int y, int num);
+  Tile(int x, int y, int num);
 
+  bool GetNullTile();
+  int GetX();
+  int GetY();
+  int GetNum();
   bool operator==(const Tile& rhs) const;
+
 };
 
 }  // namespace mylibrary

@@ -2,8 +2,8 @@
 // Created by Venyatha MANNE on 4/25/20.
 //
 
-#ifndef FINALPROJECT_IMAGE_H
-#define FINALPROJECT_IMAGE_H
+#ifndef FINALPROJECT_IMAGEPROCESSOR_H
+#define FINALPROJECT_IMAGEPROCESSOR_H
 
 #include <cinder/Surface.h>
 #include <cinder/gl/Context.h>
@@ -19,4 +19,4 @@ namespace mylibrary {
 
 }  // namespace mylibrary
 
-#endif  // FINALPROJECT_IMAGE_H
+#endif  // FINALPROJECT_IMAGEPROCESSOR_H

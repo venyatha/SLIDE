@@ -3,10 +3,10 @@
 #include <cinder/app/App.h>
 #include <cinder/app/RendererGl.h>
 
-#include "my_app.h"
 #include <vector>
-#include "path.h"
 
+#include "my_app.h"
+#include "util.h"
 
 using cinder::app::App;
 using cinder::app::RendererGl;

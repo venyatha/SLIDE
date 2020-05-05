@@ -5,9 +5,10 @@
 #include <cinder/GeomIo.h>
 #include <cinder/app/App.h>
 #include <mylibrary/GameBoard.h>
-#include <mylibrary/Image.h>
+#include <mylibrary/ImageProcessor.h>
 #include <pretzel/PretzelGui.h>
-#include "path.h"
+
+#include "util.h"
 
 namespace myapp {
 
@@ -121,16 +122,16 @@ void MyApp::DrawGrid() {
       }
 
       // if not the null tile
-      if (!game_board_.grid_[x][y].null_tile_) {
+      if (!game_board_.grid_[x][y].GetNullTile()) {
         if (picture_game_) {
           // draw the cropped image corresponding to the tile
           ci::Rectf rect(ci::Area(0,0, width, height));
-          int index = game_board_.grid_[x][y].num_ - 1;
+          int index = game_board_.grid_[x][y].GetNum() - 1;
           ci::gl::draw( texture_vec_[index],rect);
         }
 
         // draw the number of the tile
-        std::string str = std::to_string(game_board_.grid_[x][y].num_);
+        std::string str = std::to_string(game_board_.grid_[x][y].GetNum());
         ci::gl::drawStringCentered (str,ci::ivec2(width /2,
             height /2),ci::ColorA(0, 0.5, 1, 1),
             ci::Font("Arial", 30));

@@ -25,7 +25,7 @@ class GameBoard {
 
   explicit GameBoard(int size);
   void MoveTile(int x, int y, Direction dir);
-  friend std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard);
+  friend std::ostream& operator<<(std::ostream& os, GameBoard& gameBoard);
   bool CheckWin();
   void ShuffleBoard();
   bool isSolvable();

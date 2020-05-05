@@ -25,14 +25,21 @@
     - [x] add a score counter to UI
     
  - **5/3/20** Added default picture mode
-    - [x] crop an image
+    - [x] methods to crop an image
     - [x] add picture mode
     
  - **5/4/20** Main testing completed and UI improved
     - [x] thorough GameBoard testing
+        - [x] constructor
+        - [x] outstream operator
+        - [x] shuffle
+        - [x] check win
     - [x] use command line for image filepath
     - [x] improve UI
-    - [ ] image testing
+    - [x] image testing
     
- - **5/5/20** Need to do:
-    - [ ] write README file   
+ - **5/5/20** Finishing touches to UI and write documentation
+    - [x] make reset button
+    - [ ] commenting and c++ style check
+    - [ ] write README file
+    - [ ] update proposal.md 

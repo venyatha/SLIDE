@@ -8,6 +8,7 @@
 **Demo**:
 - 
 - Your classic 3 x 3 puzzle adapted to allow the image of your choosing
+
 ![Pictures game](demo/demo2.gif)
 
 ![Numbers game](demo/demo.gif)

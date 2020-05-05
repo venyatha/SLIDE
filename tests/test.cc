@@ -3,6 +3,9 @@
 #define CATCH_CONFIG_MAIN
 
 #include <mylibrary/GameBoard.h>
+#include <mylibrary/Tile.h>
+
+#include <mylibrary/ImageProcessor.h>
 
 #include <catch2/catch.hpp>
 
@@ -50,24 +53,26 @@ TEST_CASE("Tile Vector Equality") {
   }
 
   SECTION("different null tile values") {
-    vec[0].null_tile_ = true;
+    vec.push_back(mylibrary::Tile(3,3,4,true));
+    other_vec.push_back(mylibrary::Tile(3,3,4,false));
     REQUIRE(vec != other_vec);
   }
 }
+
 
 // GameBoard
 TEST_CASE("GameBoard Constructor") {
   SECTION("size 3") {
     mylibrary::GameBoard g(3);
     REQUIRE(g.grid_[1][0] == mylibrary::Tile(0,0,2));
-    REQUIRE(g.grid_[2][2].null_tile_);
+    REQUIRE(g.grid_[2][2].GetNullTile());
     REQUIRE(g.size_ == 3);
   }
 
   SECTION("size 6") {
     mylibrary::GameBoard g(6);
     REQUIRE(g.grid_[0][5] == mylibrary::Tile(0,0,31));
-    REQUIRE(g.grid_[5][5].null_tile_);
+    REQUIRE(g.grid_[5][5].GetNullTile());
     REQUIRE(g.size_ == 6);
   }
 }
@@ -105,10 +110,10 @@ TEST_CASE("Move Tile") {
     REQUIRE(os.str() == "123\n"
                         "45 \n"
                         "786\n");
-    REQUIRE(g.grid_[2][1].null_tile_);
+    REQUIRE(g.grid_[2][1].GetNullTile());
     // check that inherent x and y values stay the same
-    REQUIRE(g.grid_[2][2].x == 2);
-    REQUIRE(g.grid_[2][1].y == 2);
+    REQUIRE(g.grid_[2][2].GetX() == 2);
+    REQUIRE(g.grid_[2][1].GetY() == 2);
   }
 
   g.MoveTile(2,2,mylibrary::Direction::kUp);
@@ -217,5 +222,13 @@ TEST_CASE("shuffle board") {
     os2 << b;
     REQUIRE(os2.str() != "1234\n5678\n9101112\n131415 ");
     REQUIRE(b.isSolvable());
+  }
+}
+
+// Image
+TEST_CASE("Check Valid File") {
+  SECTION("Invalid path") {
+    std::string path= "v1/Desktop/cinder_0.9.2_mac/my-projects/final-project-vmanne3/tests/assets/test.jpg";
+    REQUIRE(mylibrary::CheckValidFile(path) == "please input a valid filepath\n");
   }
 }

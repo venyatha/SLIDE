@@ -52,9 +52,7 @@ void GameBoard::Reset(int num) {
   solution_ = vec;
 }
 
-bool GameBoard::IsNullTile(int x, int y) {
-  return grid_[x][y].null_tile_;
-}
+bool GameBoard::IsNullTile(int x, int y) { return grid_[x][y].GetNullTile(); }
 
 void GameBoard::MoveTile(int x, int y, Direction dir) {
 
@@ -81,13 +79,13 @@ void GameBoard::MoveTile(int x, int y, Direction dir) {
 
 }
 
-std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard) {
+std::ostream& operator<<(std::ostream& os, GameBoard& gameBoard) {
   for (int i = 0; i < gameBoard.size_; i++) {
     for (int j = 0; j < gameBoard.size_; j++) {
-      if (gameBoard.grid_[j][i].num_ == gameBoard.size_*gameBoard.size_) {
+      if (gameBoard.grid_[j][i].GetNum() == gameBoard.size_*gameBoard.size_) {
         os << " ";
       } else {
-        os << gameBoard.grid_[j][i].num_;
+        os << gameBoard.grid_[j][i].GetNum();
       }
     }
     os << "\n";
@@ -95,7 +93,6 @@ std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard) {
   return os;
 }
 bool GameBoard::CheckWin() { return grid_ == solution_; }
-
 
 void GameBoard::ShuffleBoard() {
   std::random_device rd;
@@ -132,12 +129,12 @@ int GameBoard::countInversions(int i, int j) {
   int inversions = 0;
   int tileNum = j * size_ + i;
   int lastTile = size_ * size_;
-  int tileValue = grid_[i][j].y * size_ + grid_[i][j].x;
+  int tileValue = grid_[i][j].GetY() * size_ + grid_[i][j].GetX();
   for (int q = tileNum + 1; q < lastTile; ++q) {
     int k = q % size_;
     int l = floor(q / size_);
 
-    int compValue = grid_[k][l].y * size_ + grid_[k][l].x;
+    int compValue = grid_[k][l].GetY() * size_ + grid_[k][l].GetX();
     if (tileValue > compValue && tileValue != (lastTile - 1)) {
       ++inversions;
     }
@@ -159,7 +156,7 @@ int GameBoard::sumInversions() {
 int GameBoard::RowOfNullTile() {
   for (int i = 0; i < size_; i++) {
     for (int j = 0; j < size_; j++) {
-      if (grid_[i][j].null_tile_) {
+      if (grid_[i][j].GetNullTile()) {
         return j + 1;
       }
     }
