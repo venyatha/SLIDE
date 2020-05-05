@@ -11,40 +11,41 @@
 
 namespace myapp {
 
-using cinder::app::KeyEvent;
-
 MyApp::MyApp() :game_board_{3}{};
 
 void MyApp::setup() {
+  // set up vector of tile textures
   texture_vec_ = mylibrary::MakeTextureVec(myapp::file_path_);
 
+  // set up gui
   gui = pretzel::PretzelGui::create("Puzzle settings");
-  gui->setSize(cinder::vec2(20,10));
-  gui->setPos(cinder::vec2(920,50));
-
+  gui->setSize(ci::vec2(20,200));
+  gui->setPos(ci::vec2(920,50));
   gui->addSlider("Grid Size", &grid_size_, 3, 7);
-  gui->addButton("Shuffle", &MyApp::ShuffleButton, this);
-  gui->addButton("Update", &MyApp::UpdateButton, this);
+  gui->addButton("Update", &MyApp::Reset, this);
   gui->addToggle("Picture mode", &picture_game_);
+  gui->addButton("Reset", &MyApp::ResetButton, this);
 
+  // shuffle game_board_ and save original state
   game_board_.ShuffleBoard();
+  original_grid_ = game_board_.grid_;
 }
 
-void MyApp::ShuffleButton() {
-  if (won_game_) {
-    won_game_ = false;
-  }
-  game_board_.ShuffleBoard();
-}
-
-void MyApp::UpdateButton() {
+void MyApp::Reset() {
   game_board_.Reset(grid_size_);
   game_board_.ShuffleBoard();
+  original_grid_ = game_board_.grid_;
   tile_x_.clear();
   tile_y_.clear();
-  score = 0;
+  moves_ = 0;
   won_game_ = false;
   picture_game_ = false;
+}
+
+void MyApp::ResetButton() {
+  // reset the grid to the original configuration
+  game_board_.grid_ = original_grid_;
+  moves_ = 0;
 }
 
 void MyApp::update() {
@@ -52,100 +53,120 @@ void MyApp::update() {
     won_game_ = true;
   }
 
+  // if user has clicked picture mode while on a different grid size,
+  // reset accordingly
   if (picture_game_ && grid_size_ !=3) {
     grid_size_ = 3;
-    game_board_.Reset(grid_size_);
-    game_board_.ShuffleBoard();
-    tile_x_.clear();
-    tile_y_.clear();
-    score = 0;
+    Reset();
+    picture_game_ = true;
   }
-
 }
 
 void MyApp::draw() {
-  cinder::gl::setMatricesWindow( getWindowSize() );
-  cinder::gl::clear(cinder::Color::black());
+  ci::gl::setMatricesWindow( getWindowSize() );
+  ci::gl::clear(ci::Color::black());
   gui->drawAll();
 
-  cinder::gl::translate(-360,-250);
+  //draw the current game board
+  ci::gl::translate(-360,-250);
   DrawGrid();
-  PrintText(std::to_string(score), cinder::Color(0,0,1),
-      ci::ivec2(935, -100), cinder::ivec2(100,100));
+
+  // print current number of moves
+  PrintText(std::to_string(moves_), ci::Color(0,0.5,1),
+      ci::ivec2(935, -100), ci::ivec2(100,100));
+
+  // print "You won!" message
   if (won_game_) {
-    PrintText("You won!", cinder::Color(0,0,1),
-        ci::ivec2(935, -50), cinder::ivec2(100,100));
+    PrintText("You won!", ci::Color(0,0,1),
+        ci::ivec2(935, -50), ci::ivec2(100,100));
   }
 }
 
-void MyApp::PrintText(const std::string& text, cinder::Color color, cinder::ivec2 loc, cinder::ivec2 size) {
-  cinder::gl::color(color);
-  cinder::TextBox box;
+void MyApp::PrintText(const std::string& text, ci::Color color, ci::ivec2 loc, ci::ivec2 size) {
+  ci::gl::color(color);
+  ci::TextBox box;
   box.setSize(size);
-  box.setAlignment(cinder::TextBox::CENTER);
-  box.setFont(cinder::Font("Arial", 30));
+  box.setAlignment(ci::TextBox::CENTER);
+  box.setFont(ci::Font("Arial", 30));
   box.setColor(color);
-  box.setBackgroundColor(cinder::ColorA(0,0,0,0));
+  box.setBackgroundColor(ci::ColorA(0,0,0,0));
   box.setText(text);
 
-  const cinder::vec2 locp = loc;
+  const ci::vec2 locp = loc;
   const auto surface = box.render();
-  const auto texture = cinder::gl::Texture::create(surface);
-  cinder::gl::draw(texture, locp);
+  const auto texture = ci::gl::Texture::create(surface);
+  ci::gl::draw(texture, locp);
 }
 
 void MyApp::DrawGrid() {
-  cinder::gl::translate( getWindowCenter().x, getWindowCenter().y);
-  cinder::gl::translate(-200,-100);
+  ci::gl::translate( getWindowCenter().x, getWindowCenter().y);
+  ci::gl::translate(-200,-100);
 
-  float x = 800 / game_board_.size_;
-  float y = 600 / game_board_.size_;
+  // calculate width and height of the tiles
+  float width = 800 / game_board_.size_;
+  float height = 600 / game_board_.size_;
 
-  for (int i = 0; i < game_board_.size_; i++) {
-    for (int j = 0; j < game_board_.size_; j++) {
-
+  for (int y = 0; y < game_board_.size_; y++) {
+    for (int x = 0; x < game_board_.size_; x++) {
+      // populate tile_x_ with the x-coordinates of the tiles
       if (tile_x_.size() < game_board_.size_) {
-        tile_x_.push_back(40+ (j+1)*x);
+        tile_x_.push_back(40+ (x+1)* width);
       }
 
+      // if a numbers game, draw the whole grid
       if (!picture_game_) {
-        cinder::gl::color( cinder::Color( 1, 1, 1 ) );
-        cinder::gl::drawStrokedRect(cinder::Rectf(cinder::Area(0,0,x,y)));
+        ci::gl::color( ci::Color( 1, 1, 1 ) );
+        ci::gl::drawStrokedRect(ci::Rectf(ci::Area(0,
+            0, width, height)));
       }
 
-      if (game_board_.grid_[j][i].num_ != game_board_.size_ *game_board_.size_) {
+      // if not the null tile
+      if (!game_board_.grid_[x][y].null_tile_) {
         if (picture_game_) {
-          cinder::Rectf rectangle(cinder::Area(0,0,x,y));
-          cinder::gl::draw( texture_vec_[game_board_.grid_[j][i].num_ - 1], rectangle );
+          // draw the cropped image corresponding to the tile
+          ci::Rectf rect(ci::Area(0,0, width, height));
+          int index = game_board_.grid_[x][y].num_ - 1;
+          ci::gl::draw( texture_vec_[index],rect);
         }
-        std::string str = std::to_string(game_board_.grid_[j][i].num_);
-        cinder::gl::drawStringCentered (str, cinder::ivec2(x/2,y/2),
-                                        cinder::ColorA(0, 0.5, 1, 1),
-                                        cinder::Font("Arial", 30));
+
+        // draw the number of the tile
+        std::string str = std::to_string(game_board_.grid_[x][y].num_);
+        ci::gl::drawStringCentered (str,ci::ivec2(width /2,
+            height /2),ci::ColorA(0, 0.5, 1, 1),
+            ci::Font("Arial", 30));
       }
-      cinder::gl::translate(x,0);
+
+      // translate right to draw the next tile
+      ci::gl::translate(width,0);
     }
 
+    // populate tile_y_ with the y-coordinates of the tiles
     if (tile_y_.size() < game_board_.size_) {
-      tile_y_.push_back(50 + (i+1)*y);
+      tile_y_.push_back(50 + (y+1)* height);
     }
-    cinder::gl::translate(-(x*game_board_.size_),y);
+
+    // translate left and down to draw the next row of tiles
+    ci::gl::translate(-(width*game_board_.size_), height);
   }
 
 }
 
-void MyApp::keyDown(KeyEvent event) {
+void MyApp::keyDown(ci::app::KeyEvent event) {
   if (event.getChar() == 'g'){
-    gui->toggleVisible();  // gui interaction will be disabled when invisible
+    gui->toggleVisible();
   }
 }
-void MyApp::mouseDown(cinder::app::MouseEvent event) {
-  std::cout << event.getX() << " " << event.getY() << std::endl;
+void MyApp::mouseDown(ci::app::MouseEvent event) {
+  // holds the current state of the grid
   std::vector<std::vector<mylibrary::Tile>> pre_move = game_board_.grid_;
 
+  // iterate through the tile_y_ and tile_x_ vectors to find the position of
+  // the mouse click in relation to the bounds of the tiles
   for (int y = 0; y < tile_y_.size(); y++) {
     for (int x = 0; x < tile_x_.size(); x++) {
       if (event.getX() <= tile_x_[x] && event.getY() <= tile_y_[y]) {
+        // try to move the tile, if the state of the grid doesn't change, try
+        // another move
         game_board_.MoveTile(x,y,mylibrary::Direction::kDown);
         if (pre_move == game_board_.grid_) {
           game_board_.MoveTile(x,y,mylibrary::Direction::kUp);
@@ -154,18 +175,20 @@ void MyApp::mouseDown(cinder::app::MouseEvent event) {
             if (pre_move == game_board_.grid_) {
               game_board_.MoveTile(x,y,mylibrary::Direction::kRight);
               if (pre_move == game_board_.grid_) {
+                // no legal move has occurred, return without incrementing moves
                 return;
               }
-              score++;
+              // legal move has been made, increment number of moves and return
+              moves_++;
               return;
             }
-            score++;
+            moves_++;
             return;
           }
-          score++;
+          moves_++;
           return;
         }
-        score++;
+        moves_++;
         return;
       }
     }

@@ -10,8 +10,16 @@
 namespace myapp {
 
 class MyApp : public cinder::app::App {
- public:
+ private:
+  void DrawGrid();
+  static void PrintText(const std::string& text, cinder::Color colour,
+      glm::ivec2 loc, cinder::ivec2 size);
+  // resets the board back to the original configuration
+  void ResetButton();
+  // resets the entire board
+  void Reset();
 
+ public:
   MyApp();
   void setup() override;
   void update() override;
@@ -19,21 +27,23 @@ class MyApp : public cinder::app::App {
   void keyDown(cinder::app::KeyEvent) override;
   void mouseDown(cinder::app::MouseEvent) override;
 
+ private:
   pretzel::PretzelGuiRef gui;
-  int grid_size_ = 4;
-  std::vector<int> tile_x_;
-  std::vector<int> tile_y_;
+  int grid_size_ = 3;
+  mylibrary::GameBoard game_board_;
   bool won_game_ = false;
   bool picture_game_ = false;
-  int score = 0;
+  int moves_ = 0;
+  // holds the original config of the grid, used for the 'reset' button
+  std::vector<std::vector<mylibrary::Tile>> original_grid_;
+  // the textures of the tiles, used in the picture game
   std::vector<cinder::gl::Texture2dRef> texture_vec_;
-
-  mylibrary::GameBoard game_board_;
-  void DrawGrid();
-  void ShuffleButton();
-  void UpdateButton();
-
-  static void PrintText(const std::string& text, cinder::Color colour, glm::ivec2 loc, cinder::ivec2 size);
+  // the x-coordinates corresponding to the bottom-right corner of each tile in
+  // a row
+  std::vector<int> tile_x_;
+  // the y-coordinates corresponding to the bottom-right corner of each tile in
+  // a column
+  std::vector<int> tile_y_;
 };
 
 
