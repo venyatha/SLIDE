@@ -42,4 +42,4 @@
     - [x] make reset button
     - [x] commenting and c++ style check
     - [x] write README file
-    - [ ] update proposal.md 
+    - [x] update proposal.md 
