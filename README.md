@@ -27,8 +27,8 @@
 
 **How to Play**:
 - 
-- enter the absolute path of your image into the program arguments
+- Enter the absolute path of your image into the program arguments
 - Navigate the puzzle by right-clicking on the tile you want to move. Remember that you can only move pieces that are adjacent to an empty tile!
 - Press 'g' to toggle visibility of the side-bar
 - Use the slider for your preferred grid size and click update (picture mode is only availabale on a 3x3 grid)
-- click reset to try solving the puzzle from its original configuration
+- Click reset to try solving the puzzle from its original configuration

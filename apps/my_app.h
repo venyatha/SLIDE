@@ -13,7 +13,7 @@ class MyApp : public cinder::app::App {
  private:
   void DrawGrid();
   static void PrintText(const std::string& text, cinder::Color colour,
-      glm::ivec2 loc, cinder::ivec2 size);
+      cinder::ivec2 loc, cinder::ivec2 size);
   // resets the board back to the original configuration
   void ResetButton();
   // resets the entire board
@@ -44,6 +44,12 @@ class MyApp : public cinder::app::App {
   // the y-coordinates corresponding to the bottom-right corner of each tile in
   // a column
   std::vector<int> tile_y_;
+  // hardcoded width and height of board in pixels
+  const int board_width_ = 800;
+  const int board_height_ = 600;
+  // default board size for picture mode
+  const int picture_mode_board_size_ = 3;
+
 };
 
 

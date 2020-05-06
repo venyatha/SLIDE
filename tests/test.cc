@@ -229,6 +229,6 @@ TEST_CASE("shuffle board") {
 TEST_CASE("Check Valid File") {
   SECTION("Invalid path") {
     std::string path= "v1/Desktop/cinder_0.9.2_mac/my-projects/final-project-vmanne3/tests/assets/test.jpg";
-    REQUIRE(mylibrary::CheckValidFile(path) == "please input a valid filepath\n");
+    REQUIRE(mylibrary::CheckValidFile(path, 267, 200) == "please input a valid filepath\n");
   }
 }

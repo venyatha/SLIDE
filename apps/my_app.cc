@@ -15,8 +15,10 @@ namespace myapp {
 MyApp::MyApp() :game_board_{3}{};
 
 void MyApp::setup() {
-  // set up vector of tile textures
-  texture_vec_ = mylibrary::MakeTextureVec(myapp::file_path_);
+  // set up vector of tile textures for picture mode
+  texture_vec_ = mylibrary::MakeTextureVec(myapp::file_path_,
+      board_width_/picture_mode_board_size_,
+      board_height_/picture_mode_board_size_);
 
   // set up gui
   gui = pretzel::PretzelGui::create("Puzzle settings");
@@ -104,8 +106,8 @@ void MyApp::DrawGrid() {
   ci::gl::translate(-200,-100);
 
   // calculate width and height of the tiles
-  float width = 800 / game_board_.GetSize();
-  float height = 600 / game_board_.GetSize();
+  float width = board_width_ / game_board_.GetSize();
+  float height = board_height_ / game_board_.GetSize();
 
   for (int y = 0; y < game_board_.GetSize(); y++) {
     for (int x = 0; x < game_board_.GetSize(); x++) {

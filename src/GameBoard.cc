@@ -60,7 +60,7 @@ void GameBoard::MoveTile(int x, int y, Direction dir) {
   }
 }
 
-std::ostream& operator<<(std::ostream& os, GameBoard& gameBoard) {
+std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard) {
   for (int i = 0; i < gameBoard.size_; i++) {
     for (int j = 0; j < gameBoard.size_; j++) {
       if (gameBoard.grid_[j][i].GetNum() == gameBoard.size_*gameBoard.size_) {

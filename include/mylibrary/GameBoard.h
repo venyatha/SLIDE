@@ -33,7 +33,7 @@ class GameBoard {
   // moves Tile with coordinate (x,y) in the Direction dir.
   // If move is illegal (not next to a null tile), nothing is changed
   void MoveTile(int x, int y, Direction dir);
-  friend std::ostream& operator<<(std::ostream& os, GameBoard& gameBoard);
+  friend std::ostream& operator<<(std::ostream& os, const GameBoard& gameBoard);
   // checks if the grid is solved
   bool CheckWin();
   // shuffles the grid

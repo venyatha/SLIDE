@@ -26,7 +26,7 @@ class Tile {
   bool GetNullTile();
   int GetX();
   int GetY();
-  int GetNum();
+  int GetNum() const;
   bool operator==(const Tile& rhs) const;
 
 };

@@ -29,6 +29,6 @@ int Tile::GetX() { return x; }
 
 int Tile::GetY() { return y; }
 
-int Tile::GetNum() { return num_; }
+int Tile::GetNum() const { return num_; }
 
 }  // namespace mylibrary

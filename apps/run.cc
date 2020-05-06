@@ -20,10 +20,13 @@ const int kHeight = 800;
 
 void SetUp(App::Settings* settings) {
   std::vector<std::string> args = settings->getCommandLineArgs();
+  if (args.empty() || args.size() > 2) {
+    std::cerr << "please input one argument/file path into the command line" << std::endl;
+  }
   myapp::file_path_ =  args[1];
 
   settings->setWindowSize(kWidth, kHeight);
-  settings->setTitle("My CS 126 Application");
+  settings->setTitle("Slide");
 }
 
 }  // namespace myapp
